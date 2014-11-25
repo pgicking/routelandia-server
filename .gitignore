@@ -11,6 +11,7 @@ vendor/ChiperSoft
 vendor/composer
 vendor/guzzle
 vendor/Luracast/explorer
+vendor/luracast/explorer
 vendor/autoload.php
 vendor/symfony
 vendor/mustache
