@@ -6,4 +6,4 @@ tests are located under `bootstrap` folder. Remaining folders contain the tests
 
 You may run the following command to run the tests
 
-    bit/behat
+    bin/behat
