@@ -20,6 +20,7 @@ vendor/rodneyrehm
 vendor/twig
 vendor/illuminate
 vendor/bshaffer
+vendor/respect
 .idea
 tag.sh
 bin/*
