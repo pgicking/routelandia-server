@@ -52,7 +52,7 @@ class DB {
         require_once('../local_config.php' );
 
       //try {
-        DB::$database_handle = new Mapper(new PDO("pgsql:host=$DB_HOST;dbname=$DB_NAME;user=$DB_USER;password=$DB_PASSWORD"));
+        DB::$database_handle = new Mapper(new PDO("pgsql:host='$DB_HOST';dbname='$DB_NAME';user='$DB_USER';password='$DB_PASSWORD'"));
         DB::$database_handle->setStyle(new Portal\Data\Styles\PortalStyle);
       //} catch (PDOException e) {
       //  throw new DatabaseErrorException($e->getMessage());
