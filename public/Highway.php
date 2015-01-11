@@ -37,7 +37,7 @@ class Highway {
    *
    * @param int $id Highway ID
    * @return Station
-   * @url GET highway/{id}/stations
+   * @url GET {id}/stations
    */
   public function getStations($id)
   {
