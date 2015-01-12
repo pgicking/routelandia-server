@@ -14,7 +14,6 @@ use Respect\Data\Styles\Standard;
  */
 class PortalStyle extends Standard
 {
-    /*
     public function realName($name)
     {
         return $name;
@@ -24,7 +23,6 @@ class PortalStyle extends Standard
     {
         return $name;
     }
-    */
 
     public function composed($left, $right)
     {
@@ -41,7 +39,7 @@ class PortalStyle extends Standard
     {
         return $this->pluralToSingular($name) . 'id';
     }
-    /*
+
     public function isRemoteIdentifier($name)
     {
         return (strlen($name) - 2 === strripos($name, 'id'));
@@ -53,7 +51,5 @@ class PortalStyle extends Standard
             return $this->singularToPlural(substr($name, 0, -2));
         }
     }
-    */
-
 }
 
