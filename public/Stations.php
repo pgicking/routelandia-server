@@ -68,11 +68,17 @@ class Stations {
   /**
    * Return the ID of the related onramp for the given station
    *
+   * Note that this is an example method that shows how you can create a custom
+   * URL and call custom functions on a model.
+   * This method violates the API spec by not returning JSON formatted data, and
+   * should ultimately be replaced by mixing in a "relatedOnrampId" field to the
+   * station model itself!
+   *
    * @param int $id The station ID to calculate related onramp ID for
    * @return int
-   * @url GET {id}/relatedonrampids
+   * @url GET {id}/relatedonrampid
    */
-  public function getRelatedOnrampIds($id) {
+  public function getRelatedOnrampId($id) {
     $thisStation = DB::instance()->stations[$id]->fetch();
     return $thisStation->getRelatedOnrampID();
   }
