@@ -36,12 +36,13 @@ class Highway {
    * Detects all possible stations for a specific highway.
    *
    * @param int $id Highway ID
-   * @return Station
+   * @return [Station]
    * @url GET {id}/stations
    */
   public function getStations($id)
   {
-    return DB::instance()->stations->highways[$id]->fetchAll();
+    $s = new Station;
+    return $s->getForHighway($id);
   }
 
 }
