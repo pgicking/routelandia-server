@@ -3,7 +3,7 @@
 require_once "../database.php";
 use Respect\Data\Collections\Filtered;
 
-class Station {
+class Stations {
 
   function __construct() {
     // Filter out the columns we don't care for from the stations table
@@ -64,4 +64,17 @@ class Station {
     //         Unfortunately that seems to throw an error in Mapper.
     return DB::instance()->selectCols->stations(array('highwayid='=>$id))->fetchAll();
   }
+
+  /**
+   * Return the ID of the related onramp for the given station
+   *
+   * @param int $id The station ID to calculate related onramp ID for
+   * @return int
+   * @url GET {id}/relatedonrampids
+   */
+  public function getRelatedOnrampIds($id) {
+    $thisStation = DB::instance()->stations[$id]->fetch();
+    return $thisStation->getRelatedOnrampID();
+  }
+
 }

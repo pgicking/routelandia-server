@@ -2,7 +2,7 @@
 
 require_once "../database.php";
 
-class Highway {
+class Highways {
 
   /**
    * Return a list of all available highways.
@@ -42,8 +42,7 @@ class Highway {
    * @return [Station]
    * @url GET {id}/stations
    */
-  public function getStations($id)
-  {
+  public function getStations($id) {
     $s = new Station;
     return $s->getForHighway($id);
   }

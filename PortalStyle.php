@@ -16,12 +16,12 @@ class PortalStyle extends Standard
 {
     public function realName($name)
     {
-        return $name;
+        return $this->pluralToSingular($name);
     }
 
     public function styledName($name)
     {
-        return $name;
+        return $this->pluralToSingular($name);
     }
 
     public function composed($left, $right)
