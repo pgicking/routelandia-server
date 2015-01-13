@@ -43,7 +43,7 @@ class Highways {
    * @url GET {id}/stations
    */
   public function getStations($id) {
-    $s = new Station;
+    $s = new Stations;
     return $s->getForHighway($id);
   }
 
