@@ -13,9 +13,10 @@ This is the server component of the Routelandia project. (To describe which woul
 ## Installation
 * Clone a copy of the repo.
 * Make sure you have [Composer](https://getcomposer.org) installed.
-* In the project directory: Install project PHP dependecies with composer. ("composer install" if installed globally, or if composer.phar is in the local directory then "php composer.phar install")
+* In the project directory: Install project PHP dependecies with composer. (`composer install` if installed globally, or if composer.phar is in the local directory then `php composer.phar install`)
 * Create local_config.php file in the main project directory (next to database.php) with the database connection details. This should look something like:
-  ```
+
+  ```php
   <?php
     $DB_HOST = "localhost";
     $DB_NAME = "portal_staging";
