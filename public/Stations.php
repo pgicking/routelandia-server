@@ -83,4 +83,16 @@ class Stations {
     return $thisStation->getRelatedOnrampID();
   }
 
+    /**
+     * Get detectors for the given station
+     *
+     * @access public
+     * @param int $id station ID
+     * @return [Detector]
+     * @url GET {id}/detectors
+     */
+    public function getDetectors($id) {
+        $s = new Detectors;
+        return $s->getForStation($id);
+    }
 }
