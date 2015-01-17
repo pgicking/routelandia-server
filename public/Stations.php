@@ -34,7 +34,7 @@ class Stations {
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    return DB::instance()->selectCols->stations()->fetchAll();
+    return DB::instance()->orderedStations()->fetchAll();
   }
 
 
@@ -48,7 +48,10 @@ class Stations {
    * @return Station
    */
   function get($id) {
-    return DB::instance()->selectCols->stations()[$id]->fetch();
+    //return DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    $s->decodeSegmentsJson();
+    return $s;
   }
 
 
@@ -62,7 +65,7 @@ class Stations {
   function getForHighway($id) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding ID.
     //         Unfortunately that seems to throw an error in Mapper.
-    return DB::instance()->selectCols->stations(array('highwayid='=>$id))->fetchAll();
+    return DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
   }
 
   /**
