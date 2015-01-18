@@ -8,7 +8,10 @@ class Stations {
   /**
    * Return all available stations.
    *
-   * Makes no effort to filter stations in any way. This is the big list.
+   * This is the big list. All "relevant" stations are returned, and because
+   * we're using the orderedstations view they are ordered by their position
+   * inside *their* linked-list. This means that they'll be returned with all
+   * HEADS first, followed by all first elements, etc...
    *
    * @access public
    * @return [Station] A list of all stations.
@@ -26,6 +29,10 @@ class Stations {
    * Return a single station.
    *
    * Returns the station with the provided stationid
+   * NOTE: This will only return "relevant" stations, which are those that
+   *       ID's >=100 and < 3000. Asking for any other stationid will result
+   *       in an error since we are using the orderedstations view, which
+   *       strips out the stations we don't care about.
    *
    * @acces public
    * @param int $id Station's database ID.
@@ -40,6 +47,10 @@ class Stations {
 
   /**
    * Return all stations for a specific highway.
+   *
+   * Retrieves all relevant stations for the specific highway, ordered by the
+   * order they are in as part of the linked-list of stations representing this
+   * highway.
    *
    * @access private
    * @param int $id The highwayid to get stations for
