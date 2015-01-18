@@ -5,11 +5,26 @@ namespace Routelandia\Entities;
 use Respect\Relational\Mapper;
 
 /**
+ * Represents a single Station
+ *
+ * == Notes about Stations in the Portal Database ==
+ * Station's have ID's grouped into thousands:
+ *   1000's: Inductive loop detectors
+ *   2000's: HOV lane detectors in vancouver. (Or maybe elsewhere later)
+ *   3000's: HD Radar detectors.
+ *   5000's: Onramp detectors.
+ *
  * An OrderedStation is much like a
  * station, except it's coming in via
  * the OrderedStations view, which scopes
- * both the columns chosen, and which stations
- * are selected. (Throws out all but 1000/3000)
+ * both the columns chosen, which stations
+ * are selected (Throws out all but 1000/3000),
+ * and orders the station by their position in
+ * the linked-list of stations.
+ * The orderedStations view is designed to give
+ * either a single station, or all stations for a
+ * specific highway. (The ordering doesn't make much
+ * sense when you select all of them)
  */
 class OrderedStation {
 
@@ -21,46 +36,64 @@ class OrderedStation {
   public $milepost;
   public $length;
   public $locationtext;
+  public $linked_list_path;
+  public $linked_list_position;
+
+  // We're going to convert these and output them as the geojson_x columns
+  // so we'll hide the raw columns by setting them protected.
+  protected $segment_raw;
+  protected $segment_50k;
+  protected $segment_100k;
+  protected $segment_250k;
+  protected $segment_500k;
+  protected $segment_1000k;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_raw;
+  public $geojson_raw;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_50k;
+  public $geojson_50k;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_100k;
+  public $geojson_100k;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_250k;
+  public $geojson_250k;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_500k;
+  public $geojson_500k;
 
   /**
    * @Relational\isNotColumn
    */
-  public $segment_1000k;
+  public $geojson_1000k;
 
   /**
-   * @Relational\isNotColumn
+   * This is a bad hack to override what the ORM is doing and trigger
+   * the JSON to be decoded when the segment_x property is set.
    */
-  public $path;
-
-  /**
-   * @Relational\isNotColumn
-   */
-  public $stationorder;
+  public function __set($name,$value) {
+      print("SETTING ".$name);
+      switch($name) {
+          case 'segment_raw':
+              $this->segment_raw = $value;
+              $this->geojson_raw = json_decode($value);
+              break;
+          case 'height':
+              $this->height = $this->_handleHeight($value);
+              break;
+      }
+  }
 
   /**
    * Decodes the "string" of JSON returned by postgres
@@ -71,20 +104,16 @@ class OrderedStation {
    *       so the client team can continue to move forward.
    */
   public function decodeSegmentsJson() {
-    $this->segment_raw = json_decode($this->segment_raw);
-    $this->segment_50k = json_decode($this->segment_50k);
-    $this->segment_100k = json_decode($this->segment_100k);
-    $this->segment_250k = json_decode($this->segment_250k);
-    $this->segment_500k = json_decode($this->segment_500k);
-    $this->segment_1000k = json_decode($this->segment_1000k);
+    $this->geojson_raw = json_decode($this->segment_raw);
+    $this->geojson_50k = json_decode($this->segment_50k);
+    $this->geojson_100k = json_decode($this->segment_100k);
+    $this->geojson_250k = json_decode($this->segment_250k);
+    $this->geojson_500k = json_decode($this->segment_500k);
+    $this->geojson_1000k = json_decode($this->segment_1000k);
   }
 
 
-  // NOTE: Copy-paste from Station.php! This is bad!
-  // However, I suspect we'll be removing Station.php in favor of
-  // just using orderedStations instead. If we do, no problem.
-  // If we don't: This should be moved to an include that is used
-  // by both entities.
+
   /**
    * Returns the ID of the onramp detector related to this station.
    *

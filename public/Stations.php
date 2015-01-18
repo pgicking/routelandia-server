@@ -5,26 +5,6 @@ use Respect\Data\Collections\Filtered;
 
 class Stations {
 
-  function __construct() {
-    // Filter out the columns we don't care for from the stations table
-    DB::instance()->selectCols = Filtered::by('stationid'
-                                                ,'highwayid'
-                                                ,'milepost'
-                                                ,'locationtext'
-                                                ,'length'
-                                                ,'upstream'
-                                                ,'downstream'
-                                                ,'opposite_stationid'
-                                                ,'point'
-                                                ,'segment_raw'
-                                                ,'segment_50k'
-                                                ,'segment_100k'
-                                                ,'segment_250k'
-                                                ,'segment_500k'
-                                                ,'segment_1000k');
-  }
-
-
   /**
    * Return all available stations.
    *
@@ -34,7 +14,11 @@ class Stations {
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    return DB::instance()->orderedStations()->fetchAll();
+    $ss = DB::instance()->orderedStations()->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
   }
 
 
@@ -48,7 +32,6 @@ class Stations {
    * @return Station
    */
   function get($id) {
-    //return DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
     $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
     $s->decodeSegmentsJson();
     return $s;
@@ -63,9 +46,13 @@ class Stations {
    * @return [Station]
    */
   function getForHighway($id) {
-    // TODO: This should use stations()->highways[$id] instead of hardcoding ID.
+    // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
-    return DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
+    $ss = DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
   }
 
   /**
@@ -82,7 +69,7 @@ class Stations {
    * @url GET {id}/relatedonrampid
    */
   public function getRelatedOnrampId($id) {
-    $thisStation = DB::instance()->stations[$id]->fetch();
+    $thisStation = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
     return $thisStation->getRelatedOnrampID();
   }
 

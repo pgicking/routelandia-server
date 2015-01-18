@@ -27,8 +27,8 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , (ST_AsGeoJson(ST_Transform(segment_250k, 4326)))::json as segment_250k
            , (ST_AsGeoJson(ST_Transform(segment_500k, 4326)))::json as segment_500k
            , (ST_AsGeoJson(ST_Transform(segment_1000k, 4326)))::json as segment_1000k
-           , array[stationid] as path
-           , 0 as stationorder  -- Start the "order" at zero
+           , array[stationid] as linked_list_path
+           , 0 as linked_list_position  -- Start the positions at zero
     FROM stations
     WHERE     upstream = 0
           AND stationid >= 1000
@@ -50,11 +50,11 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , (ST_AsGeoJson(ST_Transform(s.segment_250k, 4326)))::json as segment_250k
            , (ST_AsGeoJson(ST_Transform(s.segment_500k, 4326)))::json as segment_500k
            , (ST_AsGeoJson(ST_Transform(s.segment_1000k, 4326)))::json as segment_1000k
-           , (hs.path || s.stationid)
-           , array_length(path, 1)
+           , (hs.linked_list_path || s.stationid)
+           , array_length(linked_list_path, 1)
     FROM   stations_by_highway hs -- The above created initial table, i.e. our starting point
          , stations s
     WHERE s.stationid = hs.downstream
   )
 )
-SELECT * from stations_by_highway ORDER BY stationorder;
+SELECT * from stations_by_highway ORDER BY linked_list_position;
