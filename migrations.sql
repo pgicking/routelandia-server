@@ -21,7 +21,12 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , length
            , locationtext
            , opposite_stationid
-           , (ST_asGeoJson(ST_Transform(segment_raw, 4326)))::json as segment_raw
+           , (ST_AsGeoJson(ST_Transform(segment_raw, 4326)))::json as segment_raw
+           , (ST_AsGeoJson(ST_Transform(segment_50k, 4326)))::json as segment_50k
+           , (ST_AsGeoJson(ST_Transform(segment_100k, 4326)))::json as segment_100k
+           , (ST_AsGeoJson(ST_Transform(segment_250k, 4326)))::json as segment_250k
+           , (ST_AsGeoJson(ST_Transform(segment_500k, 4326)))::json as segment_500k
+           , (ST_AsGeoJson(ST_Transform(segment_1000k, 4326)))::json as segment_1000k
            , array[stationid] as path
            , 0 as stationorder  -- Start the "order" at zero
     FROM stations
@@ -39,7 +44,12 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , s.length
            , s.locationtext
            , s.opposite_stationid
-           , (ST_asGeoJson(ST_Transform(s.segment_raw, 4326)))::json as segment_raw
+           , (ST_AsGeoJson(ST_Transform(s.segment_raw, 4326)))::json as segment_raw
+           , (ST_AsGeoJson(ST_Transform(s.segment_50k, 4326)))::json as segment_50k
+           , (ST_AsGeoJson(ST_Transform(s.segment_100k, 4326)))::json as segment_100k
+           , (ST_AsGeoJson(ST_Transform(s.segment_250k, 4326)))::json as segment_250k
+           , (ST_AsGeoJson(ST_Transform(s.segment_500k, 4326)))::json as segment_500k
+           , (ST_AsGeoJson(ST_Transform(s.segment_1000k, 4326)))::json as segment_1000k
            , (hs.path || s.stationid)
            , array_length(path, 1)
     FROM   stations_by_highway hs -- The above created initial table, i.e. our starting point

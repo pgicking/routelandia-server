@@ -13,6 +13,54 @@ use Respect\Relational\Mapper;
  */
 class OrderedStation {
 
+  public $stationid;
+  public $upstream;
+  public $downstream;
+  public $highwayid;
+  public $opposite_stationid;
+  public $milepost;
+  public $length;
+  public $locationtext;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_raw;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_50k;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_100k;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_250k;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_500k;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $segment_1000k;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $path;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $stationorder;
 
   /**
    * Decodes the "string" of JSON returned by postgres
@@ -24,6 +72,11 @@ class OrderedStation {
    */
   public function decodeSegmentsJson() {
     $this->segment_raw = json_decode($this->segment_raw);
+    $this->segment_50k = json_decode($this->segment_50k);
+    $this->segment_100k = json_decode($this->segment_100k);
+    $this->segment_250k = json_decode($this->segment_250k);
+    $this->segment_500k = json_decode($this->segment_500k);
+    $this->segment_1000k = json_decode($this->segment_1000k);
   }
 
 
