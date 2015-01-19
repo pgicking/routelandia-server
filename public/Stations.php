@@ -87,6 +87,9 @@ class Stations {
   /**
    * Get detectors for the given station
    *
+   * Returns a list of detectors associated with the
+   * given station.
+   *
    * @access public
    * @param int $id station ID
    * @return [Detector]

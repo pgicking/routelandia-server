@@ -44,6 +44,8 @@ class Detectors
     /**
      * Return all detectors for a given station
      *
+     * Will return all the detectors associated with that station
+     *
      * @access private
      * @param int $id The stationid to get detectors for
      * @return [Detector]
@@ -65,7 +67,9 @@ class Detectors
 
     /**
      * Indicate whether the detector is still active or not
-     * aka does the detector have an end date in the database
+     *
+     * Indicate whether or not the detector is still active or not.
+     * Aka does the detector have an end date in the database.
      *
      * @param int $id id of the detector
      * @return bool
@@ -78,6 +82,9 @@ class Detectors
 
     /**
      * Get the associated station for the given detector id
+     *
+     * Returns the associated station JSON object when given a detector ID
+     *
      * @param int $detectorid The detectors ID
      * @return The associated station
      * @url GET {detectorid}/relatedstation
