@@ -76,5 +76,17 @@ class Detectors
         return $thisDetector->stillActive();
     }
 
+    /**
+     * Get the associated station for the given detector id
+     * @param int $detectorid The detectors ID
+     * @return The associated station
+     * @url GET {detectorid}/relatedstation
+     */
+    public function RelatedStation($detectorid){
+        $thisDetector = DB::instance()->detectors[$detectorid]->fetch();
+        $s = DB::instance()->orderedStations(array('stationid='=>$thisDetector->stationid))->fetch();
+        $s->decodeSegmentsJson();
+        return $s;
 
+    }
 }
