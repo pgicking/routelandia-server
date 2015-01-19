@@ -35,7 +35,7 @@ class Detectors
      *
      * @acces public
      * @param int $id detector's database ID.
-     * @return Detector
+     * @return [Detector]
      */
     function get($id) {
         return DB::instance()->selectCols->detectors()[$id]->fetch();
@@ -75,4 +75,6 @@ class Detectors
         $thisDetector = DB::instance()->detectors[$id]->fetch();
         return $thisDetector->stillActive();
     }
+
+
 }

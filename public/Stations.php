@@ -5,36 +5,23 @@ use Respect\Data\Collections\Filtered;
 
 class Stations {
 
-  function __construct() {
-    // Filter out the columns we don't care for from the stations table
-    DB::instance()->selectCols = Filtered::by('stationid'
-                                                ,'highwayid'
-                                                ,'milepost'
-                                                ,'locationtext'
-                                                ,'length'
-                                                ,'upstream'
-                                                ,'downstream'
-                                                ,'opposite_stationid'
-                                                ,'point'
-                                                ,'segment_raw'
-                                                ,'segment_50k'
-                                                ,'segment_100k'
-                                                ,'segment_250k'
-                                                ,'segment_500k'
-                                                ,'segment_1000k');
-  }
-
-
   /**
    * Return all available stations.
    *
-   * Makes no effort to filter stations in any way. This is the big list.
+   * This is the big list. All "relevant" stations are returned, and because
+   * we're using the orderedstations view they are ordered by their position
+   * inside *their* linked-list. This means that they'll be returned with all
+   * HEADS first, followed by all first elements, etc...
    *
    * @access public
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    return DB::instance()->selectCols->stations()->fetchAll();
+    $ss = DB::instance()->orderedStations()->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
   }
 
 
@@ -42,27 +29,41 @@ class Stations {
    * Return a single station.
    *
    * Returns the station with the provided stationid
+   * NOTE: This will only return "relevant" stations, which are those that
+   *       ID's >=100 and < 3000. Asking for any other stationid will result
+   *       in an error since we are using the orderedstations view, which
+   *       strips out the stations we don't care about.
    *
    * @acces public
    * @param int $id Station's database ID.
-   * @return Station
+   * @return [Station]
    */
   function get($id) {
-    return DB::instance()->selectCols->stations()[$id]->fetch();
+    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    $s->decodeSegmentsJson();
+    return $s;
   }
 
 
   /**
    * Return all stations for a specific highway.
    *
+   * Retrieves all relevant stations for the specific highway, ordered by the
+   * order they are in as part of the linked-list of stations representing this
+   * highway.
+   *
    * @access private
    * @param int $id The highwayid to get stations for
    * @return [Station]
    */
   function getForHighway($id) {
-    // TODO: This should use stations()->highways[$id] instead of hardcoding ID.
+    // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
-    return DB::instance()->selectCols->stations(array('highwayid='=>$id))->fetchAll();
+    $ss = DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
   }
 
   /**
@@ -79,20 +80,23 @@ class Stations {
    * @url GET {id}/relatedonrampid
    */
   public function getRelatedOnrampId($id) {
-    $thisStation = DB::instance()->stations[$id]->fetch();
+    $thisStation = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
     return $thisStation->getRelatedOnrampID();
   }
 
-    /**
-     * Get detectors for the given station
-     *
-     * @access public
-     * @param int $id station ID
-     * @return [Detector]
-     * @url GET {id}/detectors
-     */
-    public function getDetectors($id) {
-        $s = new Detectors;
-        return $s->getForStation($id);
-    }
+  /**
+   * Get detectors for the given station
+   *
+   * @access public
+   * @param int $id station ID
+   * @return [Detector]
+   * @url GET {id}/detectors
+   */
+  public function getDetectors($id) {
+    $s = new Detectors;
+    return $s->getForStation($id);
+  }
+
+
+
 }
