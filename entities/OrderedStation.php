@@ -136,13 +136,4 @@ class OrderedStation {
     }
   }
 
-  /**
-   * Returns the station Id for the given object
-   *
-   * @return int stationid
-   */
-  public function getStationID(){
-    return $this->$stationid;
-  }
-
 }
