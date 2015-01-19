@@ -1,6 +1,7 @@
 <?php
 
 require_once '../vendor/restler.php';
+require_once "../database.php";
 
 use Luracast\Restler\Restler;
 
