@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: pgicking
- * Date: 1/15/15
- * Time: 4:27 PM
- */
 
 require_once "../database.php";
 use Respect\Data\Collections\Filtered;
@@ -31,7 +25,7 @@ class Detectors
     /**
      * Return a single detector
      *
-     * Returns the detector with the provided stationid
+     * Returns the detector with the provided detectorid
      *
      * @acces public
      * @param int $id detector's database ID.
@@ -86,7 +80,7 @@ class Detectors
      * Returns the associated station JSON object when given a detector ID
      *
      * @param int $detectorid The detectors ID
-     * @return The associated station
+     * @return [Station] The associated station
      * @url GET {detectorid}/relatedstation
      */
     public function RelatedStation($detectorid){

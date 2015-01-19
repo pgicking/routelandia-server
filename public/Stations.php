@@ -100,6 +100,17 @@ class Stations {
     return $s->getForStation($id);
   }
 
-
+  /**
+   * @param $id
+   * @return bool
+   * @throws Exception
+   */
+  public function isValid($id){
+    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    if($s->stationid == null)
+      return false;
+    else
+      return true;
+  }
 
 }

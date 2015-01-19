@@ -24,7 +24,7 @@ class Highways {
    *
    * @access public
    * @param int $id The database ID of the highway you'd like to view.
-   * @return Highway The highway requested.
+   * @return [Highway] The highway requested.
    */
   function get($id) {
     return DB::instance()->highways[$id]->fetch();
