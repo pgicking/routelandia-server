@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: pgicking
- * Date: 1/15/15
- * Time: 4:34 PM
- */
 namespace Routelandia\Entities;
 
 use Respect\Relational\Mapper;
