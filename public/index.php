@@ -9,7 +9,6 @@ $r->addAPIClass('Highways');
 $r->addAPIClass('Stations');
 $r->addAPIClass('Resources'); //this creates resources.json at API Root
 $r->addAPIClass('TrafficStats');
-$r->addAPIClass('TrafficInfo');
 $r->addAPIClass('Detectors');
 $r->handle();
 
