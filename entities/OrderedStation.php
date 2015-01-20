@@ -122,8 +122,7 @@ class OrderedStation {
    * Note that onramps aren't useful for speed, because they're just a single loop.
    * @return int -1 if not possible, otherwise the ID that the onramp *should* be.
    */
-  public function getRelatedOnrampID() {
-    $tid = $this->stationid;
+  public static function calculateRelatedOnrampID($tid) {
     if($tid >= 1000 && $tid < 4000) {
       // First we strip it down to the base ID. (not in the thousands range.)
       while($tid > 1000) {
