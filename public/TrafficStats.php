@@ -1,6 +1,5 @@
 <?php
 
-require_once "../database.php";
 
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
