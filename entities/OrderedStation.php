@@ -80,11 +80,6 @@ class OrderedStation {
    */
   public function decodeSegmentsJson() {
     $this->geojson_raw = json_decode($this->segment_raw);
-    $this->geojson_50k = json_decode($this->segment_50k);
-    $this->geojson_100k = json_decode($this->segment_100k);
-    $this->geojson_250k = json_decode($this->segment_250k);
-    $this->geojson_500k = json_decode($this->segment_500k);
-    $this->geojson_1000k = json_decode($this->segment_1000k);
   }
 
 
