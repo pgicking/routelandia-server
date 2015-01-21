@@ -8,7 +8,7 @@
 
 use Respect\Data\Collections\Filtered;
 
-class Detectors
+class DetectorsController
 {
 
     function __construct()

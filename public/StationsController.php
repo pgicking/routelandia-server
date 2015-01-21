@@ -2,7 +2,7 @@
 
 use Respect\Data\Collections\Filtered;
 
-class Stations {
+class StationsController {
 
   /**
    * Return all available stations.
