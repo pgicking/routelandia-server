@@ -110,6 +110,20 @@ class OrderedStation {
     $this->geojson_250k = json_decode($this->segment_250k);
     $this->geojson_500k = json_decode($this->segment_500k);
     $this->geojson_1000k = json_decode($this->segment_1000k);
+    $this->linked_list_path = $this->linkedListPathAsArray();
+  }
+
+
+
+  /**
+   * Decode the "array" string returned by postgres into an actual array
+   *
+   * PHP docs say to do this. [ sigh ] Apparently PHP can't interpret the
+   * column AS an array, which it really ought to be doing.
+   */
+  public function linkedListPathAsArray() {
+    $r = str_getcsv(str_replace('\\\\', '\\', trim($this->linked_list_path, "{}")), ",", "");
+    return array_map('intval', $r);
   }
 
 
