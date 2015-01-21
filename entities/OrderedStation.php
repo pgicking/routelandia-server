@@ -36,7 +36,7 @@ class OrderedStation {
   public $milepost;
   public $length;
   public $locationtext;
-  public $linked_list_path;
+  protected $linked_list_path;
   public $linked_list_position;
 
   // We're going to convert these and output them as the geojson_x columns
@@ -110,7 +110,6 @@ class OrderedStation {
     $this->geojson_250k = json_decode($this->segment_250k);
     $this->geojson_500k = json_decode($this->segment_500k);
     $this->geojson_1000k = json_decode($this->segment_1000k);
-    $this->linked_list_path = $this->linkedListPathAsArray();
   }
 
 
