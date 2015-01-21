@@ -54,31 +54,6 @@ class OrderedStation {
   public $geojson_raw;
 
   /**
-   * @Relational\isNotColumn
-   */
-  public $geojson_50k;
-
-  /**
-   * @Relational\isNotColumn
-   */
-  public $geojson_100k;
-
-  /**
-   * @Relational\isNotColumn
-   */
-  public $geojson_250k;
-
-  /**
-   * @Relational\isNotColumn
-   */
-  public $geojson_500k;
-
-  /**
-   * @Relational\isNotColumn
-   */
-  public $geojson_1000k;
-
-  /**
    * This is a bad hack to override what the ORM is doing and trigger
    * the JSON to be decoded when the segment_x property is set.
    */
@@ -105,11 +80,6 @@ class OrderedStation {
    */
   public function decodeSegmentsJson() {
     $this->geojson_raw = json_decode($this->segment_raw);
-    $this->geojson_50k = json_decode($this->segment_50k);
-    $this->geojson_100k = json_decode($this->segment_100k);
-    $this->geojson_250k = json_decode($this->segment_250k);
-    $this->geojson_500k = json_decode($this->segment_500k);
-    $this->geojson_1000k = json_decode($this->segment_1000k);
   }
 
 
