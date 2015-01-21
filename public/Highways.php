@@ -8,7 +8,7 @@ class Highways {
    * Simply returns every row from the highways table.
    *
    * @access public
-   * @return [HighwayController] A list of available highways.
+   * @return [Highway] A list of available highways.
    */
   function index() {
     return DB::instance()->highways->fetchAll();
@@ -22,7 +22,7 @@ class Highways {
    *
    * @access public
    * @param int $id The database ID of the highway you'd like to view.
-   * @return [HighwayController] The highway requested.
+   * @return Highway The highway requested.
    */
   function get($id) {
     return DB::instance()->highways[$id]->fetch();
@@ -37,11 +37,11 @@ class Highways {
    *
    * @access public
    * @param int $id Highway ID
-   * @return [StationController]
+   * @return [Station]
    * @url GET {id}/stations
    */
   public function getStations($id) {
-    $s = new StationsController;
+    $s = new Stations;
     return $s->getForHighway($id);
   }
 

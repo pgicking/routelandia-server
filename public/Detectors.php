@@ -8,7 +8,7 @@
 
 use Respect\Data\Collections\Filtered;
 
-class DetectorsController
+class Detectors
 {
 
     function __construct()
@@ -85,7 +85,7 @@ class DetectorsController
      * Returns the associated station JSON object when given a detector ID
      *
      * @param int $detectorid The detectors ID
-     * @return [DetectorController] The associated station
+     * @return The associated station
      * @url GET {detectorid}/relatedstation
      */
     public function RelatedStation($detectorid){

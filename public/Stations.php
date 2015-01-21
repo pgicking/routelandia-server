@@ -2,7 +2,7 @@
 
 use Respect\Data\Collections\Filtered;
 
-class StationsController {
+class Stations {
 
   /**
    * Return all available stations.
@@ -76,7 +76,6 @@ class StationsController {
    *
    * @param int $id The station ID to calculate related onramp ID for
    * @url GET {id}/relatedonramp
-   * @return stdClass
    */
   public function getRelatedOnramp($id) {
     $retVal = new stdClass;
@@ -103,7 +102,7 @@ class StationsController {
    * @url GET {id}/detectors
    */
   public function getDetectors($id) {
-    $s = new DetectorsController;
+    $s = new Detectors;
     return $s->getForStation($id);
   }
 
