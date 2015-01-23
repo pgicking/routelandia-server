@@ -3,6 +3,7 @@
 namespace Routelandia\Entities;
 
 use Respect\Relational\Mapper;
+use Routelandia\DB;
 
 /**
  * Represents a single Station
@@ -95,6 +96,62 @@ class OrderedStation {
     return array_map('intval', $r);
   }
 
+
+/************************************************************
+ * STATIC CLASS FUNCTIONS
+ ************************************************************/
+
+  /**
+   * Retrieve all results from the orderedStations view.
+   *
+   * Returns everything, formatted in the OrderedStations entity way.
+   */
+  public static function fetchAll() {
+    $ss = DB::instance()->orderedStations()->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
+  }
+
+
+
+  /**
+   * Return a a single station with the given ID
+   *
+   */
+  public static function fetch($id) {
+    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    $s->decodeSegmentsJson();
+    return $s;
+  }
+
+
+  /**
+   * Return all the stations for the highway with the given ID
+   *
+   * NOTE: This shouldn't be done. There should be a ".stations" on the Highway entity.
+   * But for now...
+   */
+  public static function fetchForHighway($hid) {
+    // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
+    //         Unfortunately that seems to throw an error in Mapper.
+    $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
+    foreach($ss as $elem) {
+      $elem->decodeSegmentsJson();
+    }
+    return $ss;
+  }
+
+
+  /**
+   * Accepts an station ID and returns the related onramps.
+   *
+   * Currently will only return a single onramp, but the possibility is there...
+   */
+  public static function fetchRelatedOnramps($id) {
+    $onRamp = DB::instance()->stations(array('stationid='=>$id))->fetch();
+  }
 
 
   /**

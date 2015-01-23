@@ -1,6 +1,6 @@
 <?php
 
-namespace Portal\Data\Styles;
+namespace Routelandia\Data\Styles;
 
 use Respect\Data\Styles\Standard;
 
