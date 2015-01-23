@@ -23,6 +23,9 @@ class Detector{
   protected $controllerid;
   protected $rampid;
   protected $milepost;
+  protected $detectorclass;
+  protected $detectortitle;
+  protected $detectorstatus;
 
 
   /**
