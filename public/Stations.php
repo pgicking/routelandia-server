@@ -39,20 +39,6 @@ class Stations {
   }
 
 
-  /**
-   * Return all stations for a specific highway.
-   *
-   * Retrieves all relevant stations for the specific highway, ordered by the
-   * order they are in as part of the linked-list of stations representing this
-   * highway.
-   *
-   * @access private
-   * @param int $id The highwayid to get stations for
-   * @return [Station]
-   */
-  function getForHighway($id) {
-    return OrderedStation::fetchForHighway($id);
-  }
 
   /**
    * Return the ID of the related onramp for the given station

@@ -1,5 +1,9 @@
 <?php
 
+// Bring some things into local scope for convenience.
+use Routelandia\Entities\Highway;
+use Routelandia\Entities\OrderedStation;
+
 class Highways {
 
   /**
@@ -11,7 +15,7 @@ class Highways {
    * @return [Highway] A list of available highways.
    */
   function index() {
-    return DB::instance()->highways->fetchAll();
+    return Highway::fetchAll();
   }
 
 
@@ -25,15 +29,16 @@ class Highways {
    * @return [Highway] The highway requested.
    */
   function get($id) {
-    return DB::instance()->highways[$id]->fetch();
+    return Highway::fetch($id);
   }
 
 
   /**
    * Get stations for the specified highway
    *
-   * Scopes stations and returns only the stations attached to the highwayid provided.
-   * This method does not limit the types of stations shown in any way.
+   * Retrieves all relevant stations for the specific highway, ordered by the
+   * order they are in as part of the linked-list of stations representing this
+   * highway.
    *
    * @access public
    * @param int $id Highway ID
@@ -41,8 +46,7 @@ class Highways {
    * @url GET {id}/stations
    */
   public function getStations($id) {
-    $s = new Stations;
-    return $s->getForHighway($id);
+    return OrderedStation::fetchForHighway($id);
   }
 
 }
