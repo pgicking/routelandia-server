@@ -23,21 +23,6 @@ class Detectors
 
 
   /**
-   * Return all detectors for a given station
-   *
-   * Will return all the detectors associated with that station
-   *
-   * @access private
-   * @param int $id The stationid to get detectors for
-   * @return [Detector]
-   */
-  function getForStation($id) {
-    Detector::fetchForStation($id);
-  }
-
-
-
-  /**
    * Return all available detectors
    *
    * Makes no effort to filter detectors in any way. This is the big list.

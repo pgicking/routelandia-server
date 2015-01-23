@@ -2,6 +2,7 @@
 
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\Detector;
 
 class Stations {
 
@@ -19,6 +20,7 @@ class Stations {
   function index($highwayid=null) {
     return OrderedStation::fetchAll();
   }
+
 
 
   /**
@@ -64,6 +66,8 @@ class Stations {
     return $retVal;
   }
 
+
+
   /**
    * Get detectors for the given station
    *
@@ -76,9 +80,6 @@ class Stations {
    * @url GET {id}/detectors
    */
   public function getDetectors($id) {
-    $s = new Detectors;
-    return $s->getForStation($id);
+    return Detector::fetchForStation($id);
   }
-
-
 }
