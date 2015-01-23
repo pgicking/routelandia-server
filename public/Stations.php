@@ -75,9 +75,9 @@ class Stations {
    * station model itself!
    *
    * @param int $id The station ID to calculate related onramp ID for
-   * @url GET {id}/relatedonramp
+   * @url GET {id}/relatedonramps
    */
-  public function getRelatedOnramp($id) {
+  public function getRelatedOnramps($id) {
     $retVal = new stdClass;
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\OrderedStation::calculateRelatedOnrampID($id);
