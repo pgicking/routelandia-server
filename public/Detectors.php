@@ -1,25 +1,11 @@
 <?php
 
 use Respect\Data\Collections\Filtered;
+use Routelandia\Entities\Detector;
+use Routelandia\Entities\OrderedStation;
 
 class Detectors
 {
-
-    function __construct()
-    {
-        DB::instance()->selectCols = Filtered::by('detectorid'
-            , 'stationid'
-            , 'enabledflag'
-            , 'locationtext'
-            , 'detectortype'
-            , 'lanenumber'
-            , 'controllerid'
-            , 'end_date'
-            , 'start_date'
-            , 'milepost'
-            , 'rampid'
-            , 'enabledflag');
-    }
 
     /**
      * Return a single detector
@@ -31,7 +17,7 @@ class Detectors
      * @return [Detector]
      */
     function get($id) {
-        return DB::instance()->selectCols->detectors()[$id]->fetch();
+      return Detector::fetch($id);
     }
 
     /**
@@ -44,8 +30,10 @@ class Detectors
      * @return [Detector]
      */
     function getForStation($id) {
-        return DB::instance()->selectCols->detectors(array('stationid='=>$id))->fetchAll();
+      Detector::fetchForStation($id);
     }
+
+
     /**
      * Return all available detectors
      *
@@ -54,8 +42,8 @@ class Detectors
      * @access public
      * @return [Detector] A list of all detectors.
      */
-    function index($highwayid=null) {
-        return DB::instance()->selectCols->detectors()->fetchAll();
+    function index() {
+      return Detector::fetchAll();
     }
 
     /**
@@ -69,8 +57,8 @@ class Detectors
      * @url GET {id}/stillactive
      */
     public function stillActive($id){
-        $thisDetector = DB::instance()->detectors[$id]->fetch();
-        return $thisDetector->stillActive();
+      $thisDetector = Detector::fetch($id);
+      return $thisDetector->stillActive();
     }
 
     /**
@@ -83,10 +71,9 @@ class Detectors
      * @url GET {detectorid}/relatedstation
      */
     public function RelatedStation($detectorid){
-        $thisDetector = DB::instance()->detectors[$detectorid]->fetch();
-        $s = DB::instance()->orderedStations(array('stationid='=>$thisDetector->stationid))->fetch();
+        $thisDetector = Detector::fetch($detectorid);
+        $s = OrderedStation::Fetch($thisDetector->stationid);
         $s->decodeSegmentsJson();
         return $s;
-
     }
 }
