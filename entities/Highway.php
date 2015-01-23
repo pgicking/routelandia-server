@@ -14,12 +14,17 @@ class Highway {
   public $direction;
   public $highwayname;
   public $bound;
-  public $fullGeoJson;
 
   // Hide some of the params that the client won't need.
   protected $highwaylength;
   protected $startmp;
   protected $endmp;
+
+  /**
+   * @Relational\isNotColumn
+   */
+  public $fullGeoJson;
+
 
 
   /**
@@ -33,8 +38,14 @@ class Highway {
 
     $ss = OrderedStation::fetchForHighway($this->highwayid);
     foreach($ss as $ts) {
-      foreach($ts->geojson_raw->coordinates as $tc) {
-        $output->coordinates[] = $tc;
+      // This is sort of a bad hack. It results in the fullGeoJson object being present, but not
+      // having any coordinates.
+      // It would be preferable if the fullGeoJson was simply null if there were no stations to
+      // get coordinates from.
+      if($ts->geojson_raw) {
+        foreach($ts->geojson_raw->coordinates as $tc) {
+          $output->coordinates[] = $tc;
+        }
       }
     }
 
@@ -46,17 +57,32 @@ class Highway {
    ******************************************************************************/
 
   /**
-   * Returns all highways
+   * Returns all useful highways
+   *
+   * Scopes highways to only those highways which actually have stations attached to them.
+   * (We don't have much use for a highway with no stations in the context of this app...)
+   *
+   * @return [Highway] Useful highways.
    */
   public static function fetchAll() {
-    return DB::instance()->highways->fetchAll();
+    $hs = DB::instance()->highways->fetchAll();
+    foreach($hs as $elem) {
+      $elem->buildBigLine();
+    }
+    return $hs;
   }
 
 
   /**
    * Returns the single requested highway
+   *
+   * Will return whichever highwayID you request, regardless of if it's "useful" or not.
+   *
+   * @return Highway The Highway entity representation.
    */
   public static function fetch($id) {
-    return DB::instance()->highways[$id]->fetch();
+    $h = DB::instance()->highways[$id]->fetch();
+    $h->buildBigLine();
+    return $h;
   }
 }
