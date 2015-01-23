@@ -1,6 +1,7 @@
 <?php
 
 use Respect\Data\Collections\Filtered;
+use Routelandia\Entities\OrderedStation;
 
 class Stations {
 
@@ -16,11 +17,7 @@ class Stations {
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    $ss = DB::instance()->orderedStations()->fetchAll();
-    foreach($ss as $elem) {
-      $elem->decodeSegmentsJson();
-    }
-    return $ss;
+    return OrderedStation::fetchAll();
   }
 
 
@@ -38,9 +35,7 @@ class Stations {
    * @return [Station]
    */
   function get($id) {
-    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
-    $s->decodeSegmentsJson();
-    return $s;
+    return OrderedStation::fetch($id);
   }
 
 
@@ -56,13 +51,7 @@ class Stations {
    * @return [Station]
    */
   function getForHighway($id) {
-    // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
-    //         Unfortunately that seems to throw an error in Mapper.
-    $ss = DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
-    foreach($ss as $elem) {
-      $elem->decodeSegmentsJson();
-    }
-    return $ss;
+    return OrderedStation::fetchForHighway($id);
   }
 
   /**
@@ -82,7 +71,7 @@ class Stations {
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\OrderedStation::calculateRelatedOnrampID($id);
     $retVal->relatedOnramps = array ();
-    $onRamp = DB::instance()->stations(array('stationid='=>$retVal->relatedOnrampId))->fetch();
+    $onRamp = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
     if ($onRamp){
       $retVal->relatedOnramps[] = $onRamp;
     }
