@@ -3,6 +3,7 @@
 
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
+use Routelandia\Entities\OrderedStation;
 
 class TrafficStats{
 
@@ -33,7 +34,7 @@ class TrafficStats{
     }
 
     function isValid($id){
-        $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+        $s = OrderedStation::fetch($id);
         if(is_bool($s))
             return false;
         else
