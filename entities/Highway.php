@@ -31,7 +31,7 @@ class Highway {
    * Gets all the stations for this highway, and concatenates their JSON segments together
    * into a single giant JSON polyline, saving that into the $fullGeoJson field.
    */
-  function buildBigLine() {
+  private function buildBigLine() {
     $output = new \stdClass();
     $output->type = "Linestring";
     $output->coordinates = array();
@@ -65,7 +65,7 @@ class Highway {
    * @return [Highway] Useful highways.
    */
   public static function fetchAll() {
-    $hs = DB::instance()->highways->fetchAll();
+    $hs = DB::instance()->highwaysHavingStations->fetchAll();
     foreach($hs as $elem) {
       $elem->buildBigLine();
     }

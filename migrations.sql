@@ -58,3 +58,19 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
   )
 )
 SELECT * from stations_by_highway ORDER BY linked_list_position;
+
+
+-- VIEW: highwaysWithStations
+-- This view allows us to scope only stations which actually have stations attached to them.
+-- This is useful because a large number of the highways have no stations somehow, and are thus
+-- useless for our purposes.
+-- This also filters out any stations that don't have a segment_raw. We won't be able to draw
+-- them, so the client app doesn't want them.
+DROP VIEW highwaysHavingStations;
+CREATE VIEW highwaysHavingStations AS
+  SELECT highways.*
+  FROM highways
+    JOIN stations ON stations.highwayid=highways.highwayid
+      AND stations.segment_raw != ''
+  GROUP BY highways.highwayid
+  HAVING count(distinct stations.stationid)>0;
