@@ -79,15 +79,14 @@ class Stations {
    */
   public function getRelatedOnramp($id) {
     $retVal = new stdClass;
-	$retVal->stationid = $id;
+    $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\OrderedStation::calculateRelatedOnrampID($id);
     $retVal->relatedOnramps = array ();
-	$onRamp = DB::instance()->stations(array('stationid='=>$retVal->relatedOnrampId))->fetch();
-	if ($onRamp)
-		$retVal->relatedOnramps[] = $onRamp;
+    $onRamp = DB::instance()->stations(array('stationid='=>$retVal->relatedOnrampId))->fetch();
+    if ($onRamp){
+      $retVal->relatedOnramps[] = $onRamp;
+    }
     return $retVal;
-
-    
   }
 
   /**
