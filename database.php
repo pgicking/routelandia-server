@@ -1,5 +1,7 @@
 <?php
 
+namespace Routelandia;
+
 // Include the Respect/Relational "style" for the portal database
 require_once 'PortalStyle.php';
 
@@ -14,6 +16,7 @@ foreach (glob("../entities/*.php") as $filename)
 // Make "Mapper" easily accessible locally.
 use Respect\Relational\Mapper;
 
+use \PDO;
 
 /**
  * Represents a connection to our application database.
@@ -61,7 +64,7 @@ class DB {
 
       //try {
         DB::$database_handle = new Mapper(new PDO("pgsql:host='$DB_HOST';dbname='$DB_NAME';user='$DB_USER';password='$DB_PASSWORD'"));
-        DB::$database_handle->setStyle(new Portal\Data\Styles\PortalStyle);
+        DB::$database_handle->setStyle(new \Routelandia\Data\Styles\PortalStyle);
         DB::$database_handle->entityNamespace = 'Routelandia\\Entities\\';
       //} catch (PDOException e) {
       //  throw new DatabaseErrorException($e->getMessage());

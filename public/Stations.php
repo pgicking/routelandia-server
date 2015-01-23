@@ -1,6 +1,8 @@
 <?php
 
 use Respect\Data\Collections\Filtered;
+use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\Detector;
 
 class Stations {
 
@@ -16,12 +18,9 @@ class Stations {
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    $ss = DB::instance()->orderedStations()->fetchAll();
-    foreach($ss as $elem) {
-      $elem->decodeSegmentsJson();
-    }
-    return $ss;
+    return OrderedStation::fetchAll();
   }
+
 
 
   /**
@@ -38,32 +37,10 @@ class Stations {
    * @return [Station]
    */
   function get($id) {
-    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
-    $s->decodeSegmentsJson();
-    return $s;
+    return OrderedStation::fetch($id);
   }
 
 
-  /**
-   * Return all stations for a specific highway.
-   *
-   * Retrieves all relevant stations for the specific highway, ordered by the
-   * order they are in as part of the linked-list of stations representing this
-   * highway.
-   *
-   * @access private
-   * @param int $id The highwayid to get stations for
-   * @return [Station]
-   */
-  function getForHighway($id) {
-    // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
-    //         Unfortunately that seems to throw an error in Mapper.
-    $ss = DB::instance()->orderedStations(array('highwayid='=>$id))->fetchAll();
-    foreach($ss as $elem) {
-      $elem->decodeSegmentsJson();
-    }
-    return $ss;
-  }
 
   /**
    * Return the ID of the related onramp for the given station
@@ -75,20 +52,21 @@ class Stations {
    * station model itself!
    *
    * @param int $id The station ID to calculate related onramp ID for
-   * @url GET {id}/relatedonramp
+   * @url GET {id}/relatedonramps
    */
-  public function getRelatedOnramp($id) {
+  public function getRelatedOnramps($id) {
     $retVal = new stdClass;
-	$retVal->stationid = $id;
+    $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\OrderedStation::calculateRelatedOnrampID($id);
     $retVal->relatedOnramps = array ();
-	$onRamp = DB::instance()->stations(array('stationid='=>$retVal->relatedOnrampId))->fetch();
-	if ($onRamp)
-		$retVal->relatedOnramps[] = $onRamp;
+    $onRamp = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
+    if ($onRamp){
+      $retVal->relatedOnramps[] = $onRamp;
+    }
     return $retVal;
-
-    
   }
+
+
 
   /**
    * Get detectors for the given station
@@ -102,9 +80,6 @@ class Stations {
    * @url GET {id}/detectors
    */
   public function getDetectors($id) {
-    $s = new Detectors;
-    return $s->getForStation($id);
+    return Detector::fetchForStation($id);
   }
-
-
 }
