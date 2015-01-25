@@ -82,4 +82,14 @@ class Stations {
   public function getDetectors($id) {
     return Detector::fetchForStation($id);
   }
+
+  public function getStationfromCoord($coord){
+    $s = OrderedStation::fetchAll();
+    print("coord:".$coord."\n");
+    foreach($s as $elem){
+      if($coord == $elem->geojson_raw)
+        return $elem;
+    }
+    return null;
+  }
 }

@@ -10,8 +10,7 @@ class TrafficStats{
 
     //To test this, use
     //curl -d 'derp' http://localhost:8080/api/trafficstats/test
-    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"how_derpy" : "soooo derpy"}'
-    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d ‘{{“startPoint":"[45.44620177127501,-122.78281856328249]" } , {"endPoint": "[45.481798761799084,-122.79243160039188]" }}'
+    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"startPoint":"[45.44620177127501,-122.78281856328249]" ,"endPoint": "[45.481798761799084,-122.79243160039188]" }'
     /**
      * @param $request_data
      * @return array
@@ -24,17 +23,35 @@ class TrafficStats{
             throw new RestException(412, "JSON object is empty");
         }
 
-        //Avoid any extra json_decodes
-        $startPoint = $request_data['startPoint'];
-        $endPoint = $request_data['endPoint'];
+        print($request_data['startPoint']."\n");
+        $this->parseCoord($request_data['startPoint']);
+        //$startStation = $this->getRelatedStation((float)$request_data['startPoint']);
+        //$endStation = $this->getRelatedStation((float)$request_data['endPoint']);
 
-        print($request_data['startPoint']);
-        print($request_data['endPoint']);
-
+        //print($startStation->stationid);
         return array($request_data);
     }
 
-    function parseJSON($json){
+    function getRelatedStation($point){
+        print("point:".$point."\n");
+        $s = new Stations();
+        $Station = new OrderedStation();
+
+        $Station = $s->getStationfromCoord($point);
+
+        return $Station;
+
+    }
+
+    function parseCoord($coord){
+        $coord = trim($coord,"[]");
+        print($coord."\n");
+        $pieces = explode(",",$coord);
+        $p1 = (float)$pieces[0];
+        $p2 = (float)$pieces[1];
+        print($p1." | ".$p2."\n");
+
+        return array($p1,$p2);
 
     }
 
