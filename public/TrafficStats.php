@@ -23,17 +23,15 @@ class TrafficStats{
             throw new RestException(412, "JSON object is empty");
         }
 
-        print($request_data['startPoint']."\n");
-        $this->parseCoord($request_data['startPoint']);
-        //$startStation = $this->getRelatedStation((float)$request_data['startPoint']);
-        //$endStation = $this->getRelatedStation((float)$request_data['endPoint']);
+        $startCoords = $this->parseCoord($request_data['startPoint']);
+        $endCoords = $this->parseCoord($request_data['endPoint']);
+        $startStation = $this->getRelatedStation($startCoords);
+        $endStation = $this->getRelatedStation($endCoords);
 
-        //print($startStation->stationid);
         return array($request_data);
     }
 
     function getRelatedStation($point){
-        print("point:".$point."\n");
         $s = new Stations();
         $Station = new OrderedStation();
 
@@ -43,19 +41,22 @@ class TrafficStats{
 
     }
 
+    /**
+     * Converts JSON object coordinates into floats
+     *
+     * @param String $coord The String containing JSON coords
+     * @return array float The two coords separated into an array
+     */
     function parseCoord($coord){
         $coord = trim($coord,"[]");
-        print($coord."\n");
         $pieces = explode(",",$coord);
-        $p1 = (float)$pieces[0];
-        $p2 = (float)$pieces[1];
-        print($p1." | ".$p2."\n");
+        $p1 = (double)$pieces[0];
+        $p2 = (double)$pieces[1];
 
         return array($p1,$p2);
 
     }
 
-    //TODO: Create function to accept a JSON payload/list of tuples for segments
     /**
      * Takes two station id, returns traffic information
      *

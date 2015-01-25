@@ -85,11 +85,6 @@ class Stations {
 
   public function getStationfromCoord($coord){
     $s = OrderedStation::fetchAll();
-    print("coord:".$coord."\n");
-    foreach($s as $elem){
-      if($coord == $elem->geojson_raw)
-        return $elem;
-    }
     return null;
   }
 }
