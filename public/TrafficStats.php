@@ -29,6 +29,7 @@ class TrafficStats{
         $endPoint = $request_data['endPoint'];
 
         print($request_data['startPoint']);
+        print($request_data['endPoint']);
 
         return array($request_data);
     }
