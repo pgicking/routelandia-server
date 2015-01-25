@@ -1,11 +1,41 @@
 <?php
 
 
+use Luracast\Restler\RestException;
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
 use Routelandia\Entities\OrderedStation;
 
 class TrafficStats{
+
+    //To test this, use
+    //curl -d 'derp' http://localhost:8080/api/trafficstats/test
+    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"how_derpy" : "soooo derpy"}'
+    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d ‘{{“startPoint":"[45.44620177127501,-122.78281856328249]" } , {"endPoint": "[45.481798761799084,-122.79243160039188]" }}'
+    /**
+     * @param $request_data
+     * @return array
+     * @throws RestException
+     * @url POST
+     */
+    public function doPOST ($request_data)
+    {
+        if (empty($request_data)) {
+            throw new RestException(412, "JSON object is empty");
+        }
+
+        //Avoid any extra json_decodes
+        $startPoint = $request_data['startPoint'];
+        $endPoint = $request_data['endPoint'];
+
+        print($request_data['startPoint']);
+
+        return array($request_data);
+    }
+
+    function parseJSON($json){
+
+    }
 
     //TODO: Create function to accept a JSON payload/list of tuples for segments
     /**
