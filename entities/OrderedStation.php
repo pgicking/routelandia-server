@@ -55,6 +55,10 @@ class OrderedStation {
   public $geojson_raw;
 
 
+  /************************************************************
+   * PRIVATE CLASS FUNCTIONS
+   ************************************************************/
+
   /**
    * Decodes the "string" of JSON returned by postgres
    * to an actual object so it can be printed correctly.
@@ -63,7 +67,7 @@ class OrderedStation {
    *       in the meantime this gets the JSON out to the API
    *       so the client team can continue to move forward.
    */
-  public function decodeSegmentsJson() {
+  private function decodeSegmentsJson() {
     $this->geojson_raw = json_decode($this->segment_raw);
   }
 
@@ -75,7 +79,7 @@ class OrderedStation {
    * PHP docs say to do this. [ sigh ] Apparently PHP can't interpret the
    * column AS an array, which it really ought to be doing.
    */
-  public function linkedListPathAsArray() {
+  private function linkedListPathAsArray() {
     $r = str_getcsv(str_replace('\\\\', '\\', trim($this->linked_list_path, "{}")), ",", "");
     return array_map('intval', $r);
   }
