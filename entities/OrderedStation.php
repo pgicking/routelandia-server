@@ -54,22 +54,6 @@ class OrderedStation {
    */
   public $geojson_raw;
 
-  /**
-   * This is a bad hack to override what the ORM is doing and trigger
-   * the JSON to be decoded when the segment_x property is set.
-   */
-  public function __set($name,$value) {
-      print("SETTING ".$name);
-      switch($name) {
-          case 'segment_raw':
-              $this->segment_raw = $value;
-              $this->geojson_raw = json_decode($value);
-              break;
-          case 'height':
-              $this->height = $this->_handleHeight($value);
-              break;
-      }
-  }
 
   /**
    * Decodes the "string" of JSON returned by postgres
