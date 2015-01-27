@@ -68,7 +68,7 @@ class TrafficStats{
      * @param String $coord The String containing coords
      * @return array float The two coords separated into an array
      */
-    function parseCoord($coord){
+    function parseCoordFromString($coord){
         $coord = trim($coord,"[]");
         $pieces = explode(",",$coord);
         $p1 = (double)$pieces[0];
