@@ -30,6 +30,8 @@ class TrafficStats{
         if (empty($request_data)) {
             throw new RestException(412, "JSON object is empty");
         }
+         // To grab data from $request_data, syntax is
+         // $request_data['startPoint'];
 
         return array($request_data);
     }
