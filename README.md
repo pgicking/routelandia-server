@@ -1,6 +1,10 @@
 # Routelandia Server
 This is the server component of the Routelandia project. (To describe which would be redundant here.)
 
+If you don't have a copy of, or access to, the [Portal](http://portal.its.pdx.edu) database this project isn't
+going to do you much good. (We will make no obvious effort to reproduce or describe that database, as this project
+is destined to be owned by the team that manages it.)
+
 
 ## Technologies Used
 * PHP as our scripting language as it is known by the dev/ops team that will be maintaining the project.
