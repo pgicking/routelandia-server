@@ -83,6 +83,13 @@ class Stations {
     return Detector::fetchForStation($id);
   }
 
+  /** Will take a coordinate and return the closest stationid
+   *
+   * Will take a coordinate and return the closest stationid
+   *
+   * @param $coord
+   * @return null
+   */
   public function getStationfromCoord($coord){
     $s = OrderedStation::fetchAll();
     return null;
