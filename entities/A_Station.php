@@ -2,6 +2,7 @@
 
 namespace Routelandia\Entities;
 
+use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -52,6 +53,8 @@ class Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->stations[$id]->fetch();
+    if(is_bool($s))
+      throw new RestException(404, "Station ID not found");
     // Might need this later if we want decoded segments
     //$s->decodeSegmentsJson();
     return $s;
