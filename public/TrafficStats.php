@@ -104,7 +104,10 @@ class TrafficStats{
             return "Traffic info will go here";
     }
 
-    /**
+    /**Checks if the station id is valid
+     *
+     * Checks if the station id is valid
+     *
      * @param int $id ID of the station
      * @return bool True or false if it exists or not
      */
