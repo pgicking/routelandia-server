@@ -96,6 +96,18 @@ class OrderedStation {
     return array_map('intval', $r);
   }
 
+  /** Will take two coordinates and return the closest station
+   *
+   * Will take two coordinates and return the closest station
+   *
+   * TODO: Pass coords into SQL query to let postGIS do the heavy lfting finding the closest station
+   *
+   * @param array $coord 2 float Coordinates from client
+   * @return [OrderedStation] [NYI]
+   */
+  public function getStationFromCoord($coord){
+    return $coord;
+  }
 
 /************************************************************
  * STATIC CLASS FUNCTIONS

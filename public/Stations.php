@@ -82,4 +82,5 @@ class Stations {
   public function getDetectors($id) {
     return Detector::fetchForStation($id);
   }
+
 }

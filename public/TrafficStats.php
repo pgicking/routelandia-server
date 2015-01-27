@@ -1,19 +1,90 @@
 <?php
 
 
+use Luracast\Restler\RestException;
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
 use Routelandia\Entities\OrderedStation;
 
 class TrafficStats{
 
-    //TODO: Create function to accept a JSON payload/list of tuples for segments
+    //To test this, use
+    //curl -d 'derp' http://localhost:8080/api/trafficstats/test
+    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"startPoint":"[45.44620177127501,-122.78281856328249]" ,"endPoint": "[45.481798761799084,-122.79243160039188]" }'
+    /**
+     * Takes in a JSON object and returns traffic calculations
+     *
+     * Takes in a JSON object nd returns traffic calculations.
+     * NOTE: $request_Data is not a true JSON object but an
+     * internal restler associative array that handles JSON.
+     * Might need to be changed in the future to dump into a
+     * true JSON object.
+     *
+     *
+     * @param json $request_data  JSON payload from client
+     * @return array Spits back what it was given
+     * @throws RestException
+     * @url POST
+     */
+    // If we want to pull aprt the json payload with restler
+    // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
+    public function doPOST ($request_data)
+    {
+        if (empty($request_data)) {
+            throw new RestException(412, "JSON object is empty");
+        }
+         // To grab data from $request_data, syntax is
+         // $request_data['startPoint'];
+
+        return array($request_data);
+    }
+
+    /**
+     * Takes in a float coordinate and returns the station object closest to that point.
+     *
+     * Takes in a float coordinate and returns the station object closest to that point.
+     *
+     * @param float $point
+     * @return null|OrderedStation
+     */
+    function getRelatedStation($point){
+        $s = new OrderedStation();
+
+        $station = $s->getStationfromCoord($point);
+
+        return $station;
+
+    }
+
+    /**
+     * Converts string coordinates into floats
+     *
+     * Converts string coordinates into floats
+     * This takes string from $request_data['point'] and converts it
+     * into real floats.
+     * NOTE: 90% sure this wont be needed but it should
+     * be kept incase we change how the project is structured again.
+     *
+     * @param String $coord The String containing coords
+     * @return array float The two coords separated into an array
+     */
+    function parseCoordFromString($coord){
+        $coord = trim($coord,"[]");
+        $pieces = explode(",",$coord);
+        $p1 = (double)$pieces[0];
+        $p2 = (double)$pieces[1];
+
+        return array($p1,$p2);
+
+    }
+
     /**
      * Takes two station id, returns traffic information
      *
      * Takes two station ids and calculates all the stations inbetween them
      * to get traffic information for the segment of highway
      *
+     * @deprecated deprecated since team meeting 1/22/15 restructured the project
      * @param int $start
      * @param int $end
      * @return mixed
@@ -33,6 +104,13 @@ class TrafficStats{
             return "Traffic info will go here";
     }
 
+    /**Checks if the station id is valid
+     *
+     * Checks if the station id is valid
+     *
+     * @param int $id ID of the station
+     * @return bool True or false if it exists or not
+     */
     function isValid($id){
         $s = OrderedStation::fetch($id);
         if(is_bool($s))

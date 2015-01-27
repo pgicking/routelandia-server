@@ -28,6 +28,7 @@ class Highways {
    * @param int $id The database ID of the highway you'd like to view.
    * @return [Highway] The highway requested.
    */
+  //Do NOT change the return statement to @return Highway [Highway] unless you want a bad day
   function get($id) {
     return Highway::fetch($id);
   }
