@@ -2,6 +2,7 @@
 
 namespace Routelandia\Entities;
 
+use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -37,6 +38,8 @@ class Highway {
     $output->coordinates = array();
 
     $ss = OrderedStation::fetchForHighway($this->highwayid);
+    if(is_bool($ss))
+      throw new RestException(404,"Invalid highwayID");
     foreach($ss as $ts) {
       // This is sort of a bad hack. It results in the fullGeoJson object being present, but not
       // having any coordinates.
@@ -82,6 +85,8 @@ class Highway {
    */
   public static function fetch($id) {
     $h = DB::instance()->highways[$id]->fetch();
+    if(is_bool($h))
+      throw new RestException(404, "Highway ID not found");
     $h->buildBigLine();
     return $h;
   }

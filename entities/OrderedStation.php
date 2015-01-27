@@ -2,6 +2,7 @@
 
 namespace Routelandia\Entities;
 
+use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -60,8 +61,9 @@ class OrderedStation extends Station {
    *       in the meantime this gets the JSON out to the API
    *       so the client team can continue to move forward.
    */
-  private function decodeSegmentsJson() {
-    $this->geojson_raw = json_decode($this->segment_raw);
+  public function decodeSegmentsJson() {
+    if(is_bool($this->geojson_raw = json_decode($this->segment_raw)))
+      throw new RestException(500,"Invalid ID request");
   }
 
 
@@ -115,6 +117,8 @@ class OrderedStation extends Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    if(is_bool($s))
+      throw new RestException(404, "Invalid stationID request");
     $s->decodeSegmentsJson();
     return $s;
   }
@@ -130,6 +134,9 @@ class OrderedStation extends Station {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
+    if(is_bool($ss))
+      throw new RestException(404, "Highway ID not found");
+
     foreach($ss as $elem) {
       $elem->decodeSegmentsJson();
     }
