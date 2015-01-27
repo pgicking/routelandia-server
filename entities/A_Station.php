@@ -36,6 +36,10 @@ class Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
+    if(is_bool($ss))
+      throw new RestException(500, "Could not fetch Stations");
+    //This should *hopefully* never happen
+
     /* If stations start using decoded JSON rather than just raw
      * Segments then we'll need this.
     foreach($ss as $elem) {
