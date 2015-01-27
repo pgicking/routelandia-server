@@ -81,7 +81,10 @@ class Highway {
    *
    * Will return whichever highwayID you request, regardless of if it's "useful" or not.
    *
+   * @param $id
    * @return Highway The Highway entity representation.
+   * @throws RestException
+   * @throws \Routelandia\Exception
    */
   public static function fetch($id) {
     $h = DB::instance()->highways[$id]->fetch();

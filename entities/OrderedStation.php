@@ -63,7 +63,7 @@ class OrderedStation extends Station {
    */
   public function decodeSegmentsJson() {
     if(is_bool($this->geojson_raw = json_decode($this->segment_raw)))
-      throw new RestException(500,"Invalid ID request");
+      throw new RestException(404,"Invalid ID request");
   }
 
 
