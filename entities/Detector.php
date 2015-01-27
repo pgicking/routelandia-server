@@ -74,6 +74,10 @@ class Detector{
    * This should probably be a method on Station rather than here, but for now this works.
    */
   public static function fetchForStation($stationid) {
-    return DB::instance()->detectors(array('stationid='=>$stationid))->fetchAll();
+    $d = DB::instance()->detectors(array('stationid='=>$stationid))->fetchAll();
+    if(empty($d))
+      throw new RestException(404, "Station ID not found");
+    return $d;
   }
+
 }
