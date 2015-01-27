@@ -20,11 +20,14 @@ class TrafficStats{
      * Might need to be changed in the future to dump into a
      * true JSON object.
      *
-     * @param $request_data
-     * @return array
+     *
+     * @param json $request_data  JSON payload from client
+     * @return array Spits back what it was given
      * @throws RestException
      * @url POST
      */
+    // If we want to pull aprt the json payload with restler
+    // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
     public function doPOST ($request_data)
     {
         if (empty($request_data)) {
@@ -45,23 +48,24 @@ class TrafficStats{
      * @return null|OrderedStation
      */
     function getRelatedStation($point){
-        $s = new Stations();
-        $Station = new OrderedStation();
+        $s = new OrderedStation();
 
-        $Station = $s->getStationfromCoord($point);
+        $station = $s->getStationfromCoord($point);
 
-        return $Station;
+        return $station;
 
     }
 
     /**
-     * Converts JSON object coordinates into floats
+     * Converts string coordinates into floats
      *
-     * Converts JSON object coordinates into floats
+     * Converts string coordinates into floats
+     * This takes string from $request_data['point'] and converts it
+     * into real floats.
      * NOTE: 90% sure this wont be needed but it should
      * be kept incase we change how the project is structured again.
      *
-     * @param String $coord The String containing JSON coords
+     * @param String $coord The String containing coords
      * @return array float The two coords separated into an array
      */
     function parseCoord($coord){
@@ -80,6 +84,7 @@ class TrafficStats{
      * Takes two station ids and calculates all the stations inbetween them
      * to get traffic information for the segment of highway
      *
+     * @deprecated deprecated since team meeting 1/22/15 restructured the project
      * @param int $start
      * @param int $end
      * @return mixed
@@ -99,6 +104,10 @@ class TrafficStats{
             return "Traffic info will go here";
     }
 
+    /**
+     * @param int $id ID of the station
+     * @return bool True or false if it exists or not
+     */
     function isValid($id){
         $s = OrderedStation::fetch($id);
         if(is_bool($s))

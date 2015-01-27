@@ -96,6 +96,16 @@ class OrderedStation {
     return array_map('intval', $r);
   }
 
+  /** Will take a coordinate and return the closest stationid
+   *
+   * Will take a coordinate and return the closest stationid
+   *
+   * @param float $coord Coordinates from client
+   * @return [OrderedStation] [NYI]
+   */
+  public function getStationFromCoord($coord){
+    return $coord;
+  }
 
 /************************************************************
  * STATIC CLASS FUNCTIONS
