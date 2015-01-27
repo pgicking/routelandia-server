@@ -21,7 +21,7 @@ class TrafficStats{
      * true JSON object.
      *
      *
-     * @param json $request_data  JSON payload from client
+     * @param array $request_data  JSON payload from client
      * @return array Spits back what it was given
      * @throws RestException
      * @url POST
