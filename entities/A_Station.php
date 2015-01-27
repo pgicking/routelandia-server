@@ -95,7 +95,7 @@ class Station {
    * @return int -1 if not possible, otherwise the ID that the onramp *should* be.
    */
   public static function calculateRelatedOnrampID($tid) {
-    if($tid >= 1000 && $tid < 4000) {
+    if($tid < 4000 && $tid >= 1000 ) {
       // First we strip it down to the base ID. (not in the thousands range.)
       while($tid > 1000) {
         $tid = $tid-1000;
