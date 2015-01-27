@@ -51,8 +51,9 @@ class Stations {
    * station model itself!
    *
    * @param int $id The station ID to calculate related onramp ID for
-   * @url GET {id}/relatedonramps
    * @return stdClass
+   * @throws \Luracast\Restler\RestException
+   * @url GET {id}/relatedonramps
    */
   public function getRelatedOnramps($id) {
     $retVal = new stdClass;
