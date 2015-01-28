@@ -36,7 +36,7 @@ class Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
-    if(is_bool($ss))
+    if(!$ss)
       throw new RestException(500, "Could not fetch Stations");
     //This should *hopefully* never happen
 
@@ -57,7 +57,7 @@ class Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->stations[$id]->fetch();
-    if(is_bool($s))
+    if(!$s)
       throw new RestException(404, "Station ID not found");
     // Might need this later if we want decoded segments
     //$s->decodeSegmentsJson();

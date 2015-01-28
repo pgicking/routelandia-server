@@ -117,7 +117,7 @@ class OrderedStation extends Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
-    if(is_bool($s))
+    if(!$s)
       throw new RestException(404, "Invalid stationID request");
     $s->decodeSegmentsJson();
     return $s;
@@ -134,7 +134,7 @@ class OrderedStation extends Station {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
-    if(is_bool($ss))
+    if(!$ss)
       throw new RestException(404, "Highway ID not found");
 
     foreach($ss as $elem) {

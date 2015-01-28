@@ -61,7 +61,7 @@ class Detector{
    */
   public static function fetch($id) {
     $d = DB::instance()->detectors()[$id]->fetch();
-    if(is_bool($d))
+    if(!$d)
       throw new RestException(404, "Detector ID not found");
     return $d;
   }
