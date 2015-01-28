@@ -103,6 +103,8 @@ class OrderedStation extends Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->orderedStations()->fetchAll();
+    if(!$ss)
+      throw new RestException(500, "Internal server error: Database not found");
     foreach($ss as $elem) {
       $elem->decodeSegmentsJson();
     }

@@ -37,7 +37,7 @@ class Station {
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
     if(!$ss)
-      throw new RestException(500, "Could not fetch Stations");
+      throw new RestException(500, "Internal server error: Could not fetch Stations");
     //This should *hopefully* never happen
 
     /* If stations start using decoded JSON rather than just raw
