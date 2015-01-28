@@ -56,14 +56,32 @@ class DB {
        * NOTE: We have to go up a directory to ../local_config.php because
        * database.php will be called from some script that lives in public/
        * therefore the current execution context will be in public/
-       * Also note that this is included inside the call to get an instance
-       * because PHP includes the contenst of the includes in a literal sense,
-       * so this maintains correct variable scope.
+       * Also note that this is included inside the instance call because
+       * PHP includes the contenst of the includes in a literal sense, so
+       * this maintains correct variable scope.
+       *
+       * We're going to do a check to see if the local url is "/api-test".
+       * To do testing we'll need to set up a second configuration in the local
+       * machine's apache config, to mount this SAME DIRECTORY with a different
+       * database config file.
+       * Creating the local_test_config with the details to connect to a testing
+       * database will ensure that we can run our tests without risking damage
+       * to the local database.
+	 Check if we're using the testing url, use a different database config
        */
-      if (!file_exists('../local_config.php'))
-        throw new Exception ('local_config.php does not exist and must be created!');
+      if(strpos($_SERVER['REQUEST_URI'], "/api-test/") == 0){
+        if (!file_exists('../local_test_config.php'))
+          throw new Exception ('local_test_config.php does not exist and must be created!');
+        else
+          require_once('../local_test_config.php' );
+      }
       else
-        require_once('../local_config.php' );
+      {
+        if (!file_exists('../local_config.php'))
+          throw new Exception ('local_config.php does not exist and must be created!');
+        else
+          require_once('../local_config.php' );
+      }
 
       //try {
         DB::$database_handle = new PDO("pgsql:host='$DB_HOST';dbname='$DB_NAME';user='$DB_USER';password='$DB_PASSWORD'");
