@@ -106,7 +106,7 @@ class OrderedStation extends Station {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetchAll() {
-    $ss = DB::instance()->orderedStations()->fetchAll();
+    $ss = DB::mapper()->orderedStations()->fetchAll();
     if(!$ss){
       throw new \Luracast\Restler\RestException(404, "No stations could be found");
     }
@@ -125,7 +125,7 @@ class OrderedStation extends Station {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
-    $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
+    $s = DB::mapper()->orderedStations(array('stationid='=>$id))->fetch();
     if(!$s){
       throw new \Luracast\Restler\RestException(404, "Could not find the stationID requested");
     }
@@ -144,7 +144,7 @@ class OrderedStation extends Station {
   public static function fetchForHighway($hid) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
-    $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
+    $ss = DB::mapper()->orderedStations(array('highwayid='=>$hid))->fetchAll();
     if(!$ss) {
       throw new \Luracast\Restler\RestException(404, "No stations for the requested highway could be found");
     }

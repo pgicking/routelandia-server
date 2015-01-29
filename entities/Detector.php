@@ -52,7 +52,7 @@ class Detector{
    * Return all detectors, making no effort to filter them.
    */
   public static function fetchAll() {
-    return DB::instance()->detectors()->fetchAll();
+    return DB::mapper()->detectors()->fetchAll();
   }
 
   /**
@@ -61,7 +61,7 @@ class Detector{
    * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
-    $d = DB::instance()->detectors()[$id]->fetch();
+    $d = DB::mapper()->detectors()[$id]->fetch();
     if(!$d) {
       throw new \Luracast\Restler\RestException(404, "Requested Detector ID not found");
     }
@@ -79,7 +79,7 @@ class Detector{
    * @throws \Luracast\Restler\RestException
    */
   public static function fetchForStation($stationid) {
-    $d = DB::instance()->detectors(array('stationid='=>$stationid))->fetchAll();
+    $d = DB::mapper()->detectors(array('stationid='=>$stationid))->fetchAll();
     if(empty($d)) {
       throw new \Luracast\Restler\RestException(404, "No detectors for the requested Station ID could be found");
     }

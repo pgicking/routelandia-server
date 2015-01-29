@@ -72,7 +72,7 @@ class Highway {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetchAll() {
-    $hs = DB::instance()->highwaysHavingStations->fetchAll();
+    $hs = DB::mapper()->highwaysHavingStations->fetchAll();
     if(!$hs) {
       throw new \Luracast\Restler\RestException(404, "No highways were found.");
     }
@@ -94,7 +94,7 @@ class Highway {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
-    $h = DB::instance()->highways[$id]->fetch();
+    $h = DB::mapper()->highways[$id]->fetch();
     if(!$h) {
       throw new \Luracast\Restler\RestException(404, "Highway ID not found");
     }
