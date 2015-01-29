@@ -29,11 +29,14 @@ use \PDO;
 class DB {
   // The internal variable used to track the database handle
   private static $database_handle;
+  private static $sql;
+  private static $mapper;
+
 
   /**
    * A singleton to get a database handle.
    */
-  public static function instance() {
+  private static function get_database_handle() {
     if(DB::$database_handle == NULL) {
       /* Attempt to include the local config file which is not
        * in git. (So that we don't check in configuration stuff
@@ -53,9 +56,9 @@ class DB {
        * NOTE: We have to go up a directory to ../local_config.php because
        * database.php will be called from some script that lives in public/
        * therefore the current execution context will be in public/
-       * Also note that this is included inside the instance call because
-       * PHP includes the contenst of the includes in a literal sense, so
-       * this maintains correct variable scope.
+       * Also note that this is included inside the call to get an instance
+       * because PHP includes the contenst of the includes in a literal sense,
+       * so this maintains correct variable scope.
        */
       if (!file_exists('../local_config.php'))
         throw new Exception ('local_config.php does not exist and must be created!');
@@ -63,15 +66,41 @@ class DB {
         require_once('../local_config.php' );
 
       //try {
-        DB::$database_handle = new Mapper(new PDO("pgsql:host='$DB_HOST';dbname='$DB_NAME';user='$DB_USER';password='$DB_PASSWORD'"));
-        DB::$database_handle->setStyle(new \Routelandia\Data\Styles\PortalStyle);
-        DB::$database_handle->entityNamespace = 'Routelandia\\Entities\\';
+        DB::$database_handle = new PDO("pgsql:host='$DB_HOST';dbname='$DB_NAME';user='$DB_USER';password='$DB_PASSWORD'");
       //} catch (PDOException e) {
       //  throw new DatabaseErrorException($e->getMessage());
       //}
     }
 
     return DB::$database_handle;
+  }
+
+  /**
+   * A singleton method to get the database as a Mapper object
+   */
+  public static function mapper() {
+    if(DB::$database_handle == null) {
+      $h = DB::get_database_handle();
+
+      DB::$mapper = new Mapper($h);
+      DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
+      DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
+    }
+
+    return DB::$mapper;
+  }
+
+  /**
+   * A singleton method to get the database as a SQL object
+   */
+  public static function sql() {
+    if(DB::$sql == null) {
+      $h = DB::get_database_handle();
+
+      DB::$sql = new \Respect\Relational\Db($h);
+    }
+
+    return DB::$sql;
   }
 
 }
