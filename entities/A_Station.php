@@ -2,7 +2,6 @@
 
 namespace Routelandia\Entities;
 
-use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -33,11 +32,13 @@ class Station {
    * Retrieve all results from the stations table.
    *
    * Returns everything, as a raw station object.
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
     if(!$ss) {
-      throw new RestException(404, "No stations could be found.");
+      throw new \Luracast\Restler\RestException(404, "No stations could be found.");
     }
 
     //This should *hopefully* never happen
@@ -56,11 +57,12 @@ class Station {
   /**
    * Return a a single station with the given ID
    *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
     $s = DB::instance()->stations[$id]->fetch();
     if(!$s) {
-      throw new RestException(404, "Station ID not found");
+      throw new \Luracast\Restler\RestException(404, "Station ID not found");
     }
 
     // Might need this later if we want decoded segments
@@ -75,13 +77,15 @@ class Station {
    *
    * NOTE: This shouldn't be done. There should be a ".stations" on the Highway entity.
    * But for now...
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetchForHighway($hid) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->stations(array('highwayid='=>$hid))->fetchAll();
     if(!$ss) {
-      throw new RestException(404, "No stations were found for the highway you requested");
+      throw new \Luracast\Restler\RestException(404, "No stations were found for the highway you requested");
     }
 
     /* Might need this later to decode raw segments

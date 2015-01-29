@@ -1,7 +1,6 @@
 <?php
 namespace Routelandia\Entities;
 
-use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -58,11 +57,13 @@ class Detector{
 
   /**
    * Return the detector with the given ID.
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
     $d = DB::instance()->detectors()[$id]->fetch();
     if(!$d) {
-      throw new RestException(404, "Requested Detector ID not found");
+      throw new \Luracast\Restler\RestException(404, "Requested Detector ID not found");
     }
 
     return $d;
@@ -74,11 +75,13 @@ class Detector{
    * Return all the detectors attached to a given station.
    *
    * This should probably be a method on Station rather than here, but for now this works.
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetchForStation($stationid) {
     $d = DB::instance()->detectors(array('stationid='=>$stationid))->fetchAll();
     if(empty($d)) {
-      throw new RestException(404, "No detectors for the requested Station ID could be found");
+      throw new \Luracast\Restler\RestException(404, "No detectors for the requested Station ID could be found");
     }
 
     return $d;

@@ -2,7 +2,6 @@
 
 namespace Routelandia\Entities;
 
-use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -60,10 +59,12 @@ class OrderedStation extends Station {
    *       which is something we'll continue to work on, but
    *       in the meantime this gets the JSON out to the API
    *       so the client team can continue to move forward.
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public function decodeSegmentsJson() {
     if(is_bool($this->geojson_raw = json_decode($this->segment_raw))){
-      throw new RestException(404,"Invalid ID request");
+      throw new \Luracast\Restler\RestException(404,"Invalid ID request");
     }
   }
 
@@ -101,11 +102,13 @@ class OrderedStation extends Station {
    * Retrieve all results from the orderedStations view.
    *
    * Returns everything, formatted in the OrderedStations entity way.
+   *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetchAll() {
     $ss = DB::instance()->orderedStations()->fetchAll();
     if(!$ss){
-      throw new RestException(404, "No stations could be found");
+      throw new \Luracast\Restler\RestException(404, "No stations could be found");
     }
 
     foreach($ss as $elem) {
@@ -119,11 +122,12 @@ class OrderedStation extends Station {
   /**
    * Return a a single station with the given ID
    *
+   * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
     $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
     if(!$s){
-      throw new RestException(404, "Could not find the stationID requested");
+      throw new \Luracast\Restler\RestException(404, "Could not find the stationID requested");
     }
 
     $s->decodeSegmentsJson();
