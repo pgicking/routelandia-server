@@ -48,10 +48,7 @@ class Highways {
    * @url GET {id}/stations
    */
   public function getStations($id) {
-    $h = OrderedStation::fetchForHighway($id);
-    if(empty($h))
-      throw new \Luracast\Restler\RestException(404, "Highway ID not found");
-    return $h;
+    return OrderedStation::fetchForHighway($id);
   }
 
 }
