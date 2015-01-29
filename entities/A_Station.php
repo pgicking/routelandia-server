@@ -76,6 +76,10 @@ class Station {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->stations(array('highwayid='=>$hid))->fetchAll();
+    if(!$ss) {
+      throw new RestException(404, "No stations were found for the highway you requested");
+    }
+
     /* Might need this later to decode raw segments
     foreach($ss as $elem) {
       $elem->decodeSegmentsJson();
