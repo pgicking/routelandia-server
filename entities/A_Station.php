@@ -36,8 +36,10 @@ class Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
-    if(!$ss)
-      throw new RestException(500, "Internal server error: Could not fetch Stations");
+    if(!$ss) {
+      throw new RestException(404, "No stations could be found.");
+    }
+
     //This should *hopefully* never happen
 
     /* If stations start using decoded JSON rather than just raw
@@ -57,8 +59,10 @@ class Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->stations[$id]->fetch();
-    if(!$s)
+    if(!$s) {
       throw new RestException(404, "Station ID not found");
+    }
+
     // Might need this later if we want decoded segments
     //$s->decodeSegmentsJson();
     return $s;

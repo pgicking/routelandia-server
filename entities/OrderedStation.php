@@ -62,8 +62,9 @@ class OrderedStation extends Station {
    *       so the client team can continue to move forward.
    */
   public function decodeSegmentsJson() {
-    if(is_bool($this->geojson_raw = json_decode($this->segment_raw)))
+    if(is_bool($this->geojson_raw = json_decode($this->segment_raw))){
       throw new RestException(404,"Invalid ID request");
+    }
   }
 
 
@@ -103,8 +104,10 @@ class OrderedStation extends Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->orderedStations()->fetchAll();
-    if(!$ss)
-      throw new RestException(500, "Internal server error: Database not found");
+    if(!$ss){
+      throw new RestException(404, "No stations could be found");
+    }
+
     foreach($ss as $elem) {
       $elem->decodeSegmentsJson();
     }
@@ -119,8 +122,10 @@ class OrderedStation extends Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->orderedStations(array('stationid='=>$id))->fetch();
-    if(!$s)
-      throw new RestException(404, "Invalid stationID request");
+    if(!$s){
+      throw new RestException(404, "Could not find the stationID requested");
+    }
+
     $s->decodeSegmentsJson();
     return $s;
   }
@@ -136,8 +141,9 @@ class OrderedStation extends Station {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
-    if(!$ss)
-      throw new RestException(404, "Highway ID not found");
+    if(!$ss) {
+      throw new RestException(404, "No stations for the requested highway could be found");
+    }
 
     foreach($ss as $elem) {
       $elem->decodeSegmentsJson();

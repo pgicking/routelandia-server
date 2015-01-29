@@ -61,8 +61,10 @@ class Detector{
    */
   public static function fetch($id) {
     $d = DB::instance()->detectors()[$id]->fetch();
-    if(!$d)
-      throw new RestException(404, "Detector ID not found");
+    if(!$d) {
+      throw new RestException(404, "Requested Detector ID not found");
+    }
+
     return $d;
   }
 
@@ -75,8 +77,10 @@ class Detector{
    */
   public static function fetchForStation($stationid) {
     $d = DB::instance()->detectors(array('stationid='=>$stationid))->fetchAll();
-    if(empty($d))
-      throw new RestException(404, "Station ID not found");
+    if(empty($d)) {
+      throw new RestException(404, "No detectors for the requested Station ID could be found");
+    }
+
     return $d;
   }
 

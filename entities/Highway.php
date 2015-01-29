@@ -69,8 +69,10 @@ class Highway {
    */
   public static function fetchAll() {
     $hs = DB::instance()->highwaysHavingStations->fetchAll();
-    if(!$hs)
-      throw new RestException(500, "Internal server error: Could not reach database");
+    if(!$hs) {
+      throw new RestException(404, "No highways were found.");
+    }
+
     foreach($hs as $elem) {
       $elem->buildBigLine();
     }
@@ -90,8 +92,9 @@ class Highway {
    */
   public static function fetch($id) {
     $h = DB::instance()->highways[$id]->fetch();
-    if(!$h)
+    if(!$h) {
       throw new RestException(404, "Highway ID not found");
+    }
     $h->buildBigLine();
     return $h;
   }
