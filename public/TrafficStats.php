@@ -113,7 +113,7 @@ class TrafficStats{
      */
     function isValid($id){
         $s = OrderedStation::fetch($id);
-        if(is_bool($s))
+        if(!$s)
             return false;
         else
             return true;

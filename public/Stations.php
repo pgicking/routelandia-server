@@ -41,7 +41,6 @@ class Stations {
   }
 
 
-
   /**
    * Return the ID of the related onramp for the given station
    *
@@ -52,12 +51,16 @@ class Stations {
    * station model itself!
    *
    * @param int $id The station ID to calculate related onramp ID for
+   * @return stdClass $retVal An object containing the ID searched for, the calculated result, and an array of relation onramps.
+   * @throws \Luracast\Restler\RestException
    * @url GET {id}/relatedonramps
    */
   public function getRelatedOnramps($id) {
     $retVal = new stdClass;
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\Station::calculateRelatedOnrampID($id);
+    if($retVal->relatedOnrampId == null)
+      throw new \Luracast\Restler\RestException(404, "Station ID not found");
     $retVal->relatedOnramps = array ();
     $onRamp = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
     if ($onRamp){

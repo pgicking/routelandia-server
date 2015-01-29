@@ -2,6 +2,7 @@
 
 namespace Routelandia\Entities;
 
+use Luracast\Restler\RestException;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 
@@ -35,6 +36,10 @@ class Station {
    */
   public static function fetchAll() {
     $ss = DB::instance()->stations()->fetchAll();
+    if(!$ss)
+      throw new RestException(500, "Internal server error: Could not fetch Stations");
+    //This should *hopefully* never happen
+
     /* If stations start using decoded JSON rather than just raw
      * Segments then we'll need this.
     foreach($ss as $elem) {
@@ -52,6 +57,8 @@ class Station {
    */
   public static function fetch($id) {
     $s = DB::instance()->stations[$id]->fetch();
+    if(!$s)
+      throw new RestException(404, "Station ID not found");
     // Might need this later if we want decoded segments
     //$s->decodeSegmentsJson();
     return $s;
@@ -88,7 +95,7 @@ class Station {
    * @return int -1 if not possible, otherwise the ID that the onramp *should* be.
    */
   public static function calculateRelatedOnrampID($tid) {
-    if($tid >= 1000 && $tid < 4000) {
+    if($tid < 4000 && $tid >= 1000 ) {
       // First we strip it down to the base ID. (not in the thousands range.)
       while($tid > 1000) {
         $tid = $tid-1000;
