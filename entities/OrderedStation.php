@@ -142,7 +142,7 @@ class OrderedStation extends Station {
     //         Unfortunately that seems to throw an error in Mapper.
     $ss = DB::instance()->orderedStations(array('highwayid='=>$hid))->fetchAll();
     if(!$ss) {
-      throw new RestException(404, "No stations for the requested highway could be found");
+      throw new \Luracast\Restler\RestException(404, "No stations for the requested highway could be found");
     }
 
     foreach($ss as $elem) {
