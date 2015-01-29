@@ -38,8 +38,7 @@ class Highway {
     $output->coordinates = array();
 
     $ss = OrderedStation::fetchForHighway($this->highwayid);
-    if(!$ss)
-      throw new RestException(404,"Invalid highwayID");
+
     foreach($ss as $ts) {
       // This is sort of a bad hack. It results in the fullGeoJson object being present, but not
       // having any coordinates.
