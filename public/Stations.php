@@ -59,8 +59,6 @@ class Stations {
     $retVal = new stdClass;
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\Station::calculateRelatedOnrampID($id);
-    if($retVal->relatedOnrampId == null)
-      throw new \Luracast\Restler\RestException(404, "Station ID not found");
     $retVal->relatedOnramps = array ();
     $onRamp = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
     if ($onRamp){
