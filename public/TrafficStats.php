@@ -14,12 +14,27 @@ class TrafficStats{
     /**
      * Takes in a JSON object and returns traffic calculations
      *
-     * Takes in a JSON object nd returns traffic calculations.
-     * NOTE: $request_Data is not a true JSON object but an
-     * internal restler associative array that handles JSON.
-     * Might need to be changed in the future to dump into a
-     * true JSON object.
+     * The JSON object sent to describe the request should be in the following format:
      *
+     * <code><pre>
+     * {<br />
+     *  &nbsp;&nbsp; "startpt": {<br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": -122.00, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;         }, <br />
+     *  &nbsp;&nbsp; "endpt":   { <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": -122.01, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": 45.00 <br />
+     *  &nbsp;&nbsp;            }, <br />
+     *  &nbsp;&nbsp; "time":    { <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "midpoint": "17:30", <br />
+     *  &nbsp;&nbsp;   &nbsp;&nbsp;           "weekday": "Thursday" <br />
+     *  &nbsp;&nbsp;            } <br />
+     * }
+     * </pre></code>
+     *
+     * The lat and lng sholud be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
+     * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
      * @return array Spits back what it was given
