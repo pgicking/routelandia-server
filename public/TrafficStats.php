@@ -43,13 +43,17 @@ class TrafficStats{
      */
     // If we want to pull aprt the json payload with restler
     // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
-    public function doPOST ($request_data)
+    public function doPOST ($startpt,$request_data=null)
     {
         if (empty($request_data)) {
             throw new RestException(412, "JSON object is empty");
         }
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
+
+        print($startpt['lat']);
+
+        #$this->getRelatedStation($request_data['startpt']);
 
         return array($request_data);
     }
