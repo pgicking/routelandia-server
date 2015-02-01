@@ -54,10 +54,12 @@ class TrafficStats{
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
 
+        $point[0] = $startpt['lat'];
+        $point[1] = $startpt['lng'];
+        $this->getRelatedStation($point);
 
-        #$this->getRelatedStation($request_data['startpt']);
-
-        return array($request_data);
+        print("\n");
+        return;
     }
 
     /**

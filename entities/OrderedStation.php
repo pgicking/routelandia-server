@@ -3,6 +3,7 @@
 namespace Routelandia\Entities;
 
 use Respect\Relational\Mapper;
+use Respect\Relational\Sql;
 use Routelandia\DB;
 
 /**
@@ -91,12 +92,17 @@ class OrderedStation extends Station {
    * @return [OrderedStation] [NYI]
    */
   public function getStationFromCoord($coord){
-    $s = Sql::select('*')->from('stations')->where(array("ST_DistanceST_Distance(ST_Transform(ST_GeomFromText('POINT(-122.78281856328249 45.44620177127501)', 4326), 3857), segment_raw)" <= 500 ));
+    //$s = Sql::select('*')->from('stations')->where(array("ST_Distance(ST_Transform(ST_GeomFromText('POINT(-122.78281856328249 45.44620177127501)', 4326), 3857), segment_raw) <= 500"));
+    $s = Sql::select('*')->from('stations');
     print($s);
-    return $coord;
+    $ss = DB::sql()->orderedStations()->query($s)->fetch();
+    //print($ss->stationid);
+    print("\n".get_class($ss));
+    var_dump($ss);
+    return $ss;
   }
   /*
-   * SELECT *
+  SELECT *
   FROM stations
   WHERE ST_Distance(ST_Transform(ST_GeomFromText('POINT(-122.78281856328249 45.44620177127501)', 4326), 3857), segment_raw) <= 500;
    */
