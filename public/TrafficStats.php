@@ -56,8 +56,11 @@ class TrafficStats{
 
         $point[0] = $startpt['lat'];
         $point[1] = $startpt['lng'];
-        $this->getRelatedStation($point);
-
+        try {
+            $this->getRelatedStation($point);
+        }catch (Exception $e){
+            throw new RestException(400,"Given coordinates refer to stations on different highways");
+        }
         print("\n");
         return array($request_data);
     }
@@ -69,12 +72,13 @@ class TrafficStats{
      *
      * @param array $point 2 element array with two floats
      * @return array OrderedStation
+     * @throws Exception
      */
     function getRelatedStation($point){
-        $s = new OrderedStation();
 
-        $stations = $s->getStationfromCoord($point);
-
+        $stations = OrderedStation::getStationfromCoord($point);
+        if(!Stations::checkSamehighway($stations))
+            throw new Exception("Closest Stations are on different Highways");
         return $stations;
 
     }
