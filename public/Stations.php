@@ -94,7 +94,7 @@ class Stations {
   /** Checks if all the stations are on the same highway
    *
    * Checks if all the given stations are on the same highway
-   *
+   * TODO: Move this function somewhere more appropriate
    * @param array $stations
    * @return bool
    */
@@ -115,6 +115,7 @@ class Stations {
    * check if an array has a next element
    * NOTE: Placed here because I dont know where "misc" functions should
    * go in our current MVC set up. I expect this needs to be moved - Peter
+   * TODO: Move this function somewhere more appropriate
    *
    * @param array $array
    * @return bool

@@ -9,8 +9,25 @@ use Routelandia\Entities\OrderedStation;
 class TrafficStats{
 
     //To test this, use
-    //curl -d 'derp' http://localhost:8080/api/trafficstats/test
-    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"startPoint":"[45.44620177127501,-122.78281856328249]" ,"endPoint": "[45.481798761799084,-122.79243160039188]" }'
+    /*
+curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d
+'
+{
+    "startpt": {
+       "lat": -122.782818,
+       "lng": 45.446201
+       },
+    "endpt": {
+       "lat": -122.01,
+       "lng": 45.00
+    },
+    "time": {
+       "midpoint": "17:30",
+       "weekday": "Thursday"
+    }
+}
+'
+     */
     /**
      * Takes in a JSON object and returns traffic calculations
      *
@@ -57,7 +74,7 @@ class TrafficStats{
         $point[0] = $startpt['lat'];
         $point[1] = $startpt['lng'];
         try {
-            $this->getRelatedStation($point);
+            $this->getRelatedStations($point);
         }catch (Exception $e){
             throw new RestException(400,"Given coordinates refer to stations on different highways");
         }
@@ -74,9 +91,10 @@ class TrafficStats{
      * @return array OrderedStation
      * @throws Exception
      */
-    function getRelatedStation($point){
+    function getRelatedStations($point){
 
         $stations = OrderedStation::getStationfromCoord($point);
+        //this type validation should probably be in a different function
         if(!Stations::checkSamehighway($stations))
             throw new Exception("Closest Stations are on different Highways");
         return $stations;
