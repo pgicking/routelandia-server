@@ -98,11 +98,6 @@ class OrderedStation extends Station {
 
     return $ss;
   }
-  /*
-  SELECT *
-  FROM stations
-  WHERE ST_Distance(ST_Transform(ST_GeomFromText('POINT(-122.78281856328249 45.44620177127501)', 4326), 3857), segment_raw) <= 500;
-   */
 
   /************************************************************
    * STATIC CLASS FUNCTIONS

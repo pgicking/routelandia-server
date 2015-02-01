@@ -59,7 +59,7 @@ class TrafficStats{
         $this->getRelatedStation($point);
 
         print("\n");
-        return;
+        return array($request_data);
     }
 
     /**
@@ -67,15 +67,15 @@ class TrafficStats{
      *
      * Takes in a float coordinate and returns the station object closest to that point.
      *
-     * @param float $point
-     * @return null|OrderedStation
+     * @param array $point 2 element array with two floats
+     * @return array OrderedStation
      */
     function getRelatedStation($point){
         $s = new OrderedStation();
 
-        $station = $s->getStationfromCoord($point);
+        $stations = $s->getStationfromCoord($point);
 
-        return $station;
+        return $stations;
 
     }
 

@@ -90,4 +90,43 @@ class Stations {
     return Detector::fetchForStation($id);
   }
 
+
+  /** Checks if all the stations are on the same highway
+   *
+   * Checks if all the given stations are on the same highway
+   *
+   * @param array $stations
+   * @return bool
+   */
+  function checkSameHighway($stations)
+  {
+    while($this->has_next($stations)){
+      if(current($stations)->highwayid != next($stations)->highwayid)
+        return false;
+    }
+    return true;
+
+  }
+
+  /** Check if array has a next element
+   *
+   * check if an array has a next element
+   * NOTE: Placed here because I dont know where "misc" functions should
+   * go in our current MVC set up. I expect this needs to be moved - Peter
+   *
+   * @param array $array
+   * @return bool
+   */
+  function has_next($array) {
+    if (is_array($array)) {
+      if (next($array) === false) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
 }
