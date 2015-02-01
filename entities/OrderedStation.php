@@ -84,21 +84,18 @@ class OrderedStation extends Station {
 
   /** Will take two coordinates and return the closest station
    *
-   * Will take two coordinates and return the closest station
+   * Will take two coordinates and return the closest stations
    *
-   * TODO: Pass coords into SQL query to let postGIS do the heavy lfting finding the closest station
+   * NOTE: Passed coordinates must have at least 6 significant digits or
+   * nothing will be returned
    *
    * @param array $coord 2 float Coordinates from client
-   * @return [OrderedStation] [NYI]
+   * @return array [OrderedStation] List of ordered stations
    */
   public function getStationFromCoord($coord){
-    //$s = Sql::select('*')->from('stations')->where(array("ST_Distance(ST_Transform(ST_GeomFromText('POINT(-122.78281856328249 45.44620177127501)', 4326), 3857), segment_raw) <= 500"));
-    $s = Sql::select('*')->from('stations');
-    print($s);
-    $ss = DB::sql()->orderedStations()->query($s)->fetch();
-    //print($ss->stationid);
-    print("\n".get_class($ss));
-    var_dump($ss);
+    $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[0],$coord[1])', 4326), 3857), segment_raw) <= 500");
+    $ss = DB::sql()->orderedStations()->query($s)->fetchAll();
+
     return $ss;
   }
   /*
