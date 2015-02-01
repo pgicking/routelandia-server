@@ -8,7 +8,7 @@ Feature: Highways Controller
     # Check it's length? (Should be 2 with our testing database)
 
   Scenario: request valid highwayid
-    When I request "highways/1"
+    When I request "highways/9"
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"
@@ -40,7 +40,7 @@ Feature: Highways Controller
 
 
   Scenario: request stations for valid highwayid
-    When I request "highways/1/stations"
+    When I request "highways/10/stations"
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"

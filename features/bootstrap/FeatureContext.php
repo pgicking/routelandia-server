@@ -52,6 +52,23 @@ class FeatureContext extends BehatContext
 
     }
 
+    /**
+     * @Given /^the response is boolean$/
+     */
+    public function theResponseIsBoolean()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given /^the value is "([^"]*)"$/
+     */
+    public function theValueIs($arg1)
+    {
+        throw new PendingException();
+    }
+
+
 //
 // Place your definition and hook methods here:
 //

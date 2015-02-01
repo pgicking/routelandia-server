@@ -7,7 +7,7 @@ Feature: Stations Controller
     And the type is "array"
 
   Scenario: request a valid stationid
-    When I request "stations/1"
+    When I request "stations/1118"
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"
@@ -20,7 +20,7 @@ Feature: Stations Controller
     # And the error object properties are..
 
   Scenario: request detectors for a valid stationid
-    When I request "stations/1/detectors"
+    When I request "stations/1064/detectors"
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
@@ -33,7 +33,7 @@ Feature: Stations Controller
     # And the error object properties are..
 
   Scenario: request related onramp for valid stationid
-    When I request "stations/1/relatedonramps"
+    When I request "stations/1064/relatedonramps"
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"
@@ -47,7 +47,7 @@ Feature: Stations Controller
     # And the error object properties are..
 
   Scenario: request detectors for a valid stationid
-    When I request "stations/1/detectors"
+    When I request "stations/1064/detectors"
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
