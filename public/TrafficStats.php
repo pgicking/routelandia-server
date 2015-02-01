@@ -37,13 +37,16 @@ class TrafficStats{
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
+     * @param $startpt
+     * @param $endpt
+     * @param $time
      * @return array Spits back what it was given
      * @throws RestException
      * @url POST
      */
     // If we want to pull aprt the json payload with restler
     // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
-    public function doPOST ($startpt,$request_data=null)
+    public function doPOST ($startpt, $endpt, $time,$request_data=null)
     {
         if (empty($request_data)) {
             throw new RestException(412, "JSON object is empty");
@@ -51,7 +54,6 @@ class TrafficStats{
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
 
-        print($startpt['lat']);
 
         #$this->getRelatedStation($request_data['startpt']);
 
