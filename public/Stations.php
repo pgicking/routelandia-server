@@ -73,6 +73,7 @@ class Stations {
     } catch (Exception $e) {
       $retVal->relatedOnrampInfo = null;
     }
+    
     return $retVal;
   }
 
@@ -134,7 +135,7 @@ class Stations {
     foreach($arrayOfHighwayIds as $highwayId => $stations) {
       $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
       $startCount = 0;
-      $endCount = 0;
+      $endCount = 0;Once the creating tests branch is added to master this issue can be closed :)
       $finalHighwayId = 0;
       foreach($arrayOfHighwayIds as $akey=>$avalue){
         $count = 0;
