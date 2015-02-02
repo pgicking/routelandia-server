@@ -502,6 +502,8 @@ class RestContext extends BehatContext
                 if (is_object($data)) return;
             case 'null' :
                 if (is_null($data)) return;
+			case 'bool' :
+				if (is_bool($data)) return;
         }
 
         throw new Exception("Response is not of type '$type'\n\n" .

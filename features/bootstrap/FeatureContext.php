@@ -19,6 +19,7 @@ Behat\Gherkin\Node\TableNode;
  */
 class FeatureContext extends BehatContext
 {
+	private $_type = null;
     /**
      * Initializes context.
      * Every scenario gets it's own context object.
@@ -57,7 +58,9 @@ class FeatureContext extends BehatContext
      */
     public function theResponseIsBoolean()
     {
-        throw new PendingException();
+		if ($this->_type != 'bool') {
+            throw new Exception("Response was not boolean\n\n");
+        }
     }
 
     /**
@@ -65,7 +68,9 @@ class FeatureContext extends BehatContext
      */
     public function theValueIs($arg1)
     {
-        throw new PendingException();
+		if ($arg1 != true){
+        	throw new PendingException();
+		}
     }
 
 
