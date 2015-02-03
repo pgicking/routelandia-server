@@ -59,21 +59,19 @@ class Stations {
    * @url GET {id}/relatedonramp
    */
   public function getRelatedOnramp($id) {
-    try {
-      $tempStation = Stations::get($id);
-    } catch (Exception $e) {
-      throw $e;
-    }
-
-    $retVal = new stdClass;
+	try {
+		$tempStation = Stations::get($id);
+	} catch (Exception $e) {
+		throw $e;
+	}
+	$retVal = new stdClass;
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\Station::calculateRelatedOnrampID($id);
     try {
-      $retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramp($retVal->relatedOnrampId);
+    	$retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
     } catch (Exception $e) {
-      $retVal->relatedOnrampInfo = null;
+    	throw new \Luracast\Restler\RestException(404, "No Onramps were found.");
     }
-    
     return $retVal;
   }
 
@@ -135,7 +133,7 @@ class Stations {
     foreach($arrayOfHighwayIds as $highwayId => $stations) {
       $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
       $startCount = 0;
-      $endCount = 0;Once the creating tests branch is added to master this issue can be closed :)
+      $endCount = 0;
       $finalHighwayId = 0;
       foreach($arrayOfHighwayIds as $akey=>$avalue){
         $count = 0;
