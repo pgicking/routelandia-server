@@ -53,25 +53,6 @@ class FeatureContext extends BehatContext
 
     }
 
-    /**
-     * @Given /^the response is boolean$/
-     */
-    public function theResponseIsBoolean()
-    {
-		if ($this->_type != 'bool') {
-            throw new Exception("Response was not boolean\n\n");
-        }
-    }
-
-    /**
-     * @Given /^the value is "([^"]*)"$/
-     */
-    public function theValueIs($arg1)
-    {
-		if ($arg1 != true){
-        	throw new PendingException();
-		}
-    }
 
 
 //
