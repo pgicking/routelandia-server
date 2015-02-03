@@ -34,5 +34,5 @@ Feature: Detectors Controller
   Scenario: request the active status of a detector that is still active
     When I request "detectors/100059/stillactive"
     Then the response status code should be 200
-    And the response is boolean
-    And the value is "true"
+    And the response is JSON
+    And the type is "object"
