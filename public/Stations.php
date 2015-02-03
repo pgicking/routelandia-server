@@ -70,7 +70,7 @@ class Stations {
     try {
     	$retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
     } catch (Exception $e) {
-    	throw new \Luracast\Restler\RestException(404, "No Onramps were found.");
+    	$retVal->relatedOnrampInfo = null;
     }
     return $retVal;
   }
