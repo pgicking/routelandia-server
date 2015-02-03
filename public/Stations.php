@@ -100,12 +100,25 @@ class Stations {
    */
   public static function checkSameHighway($stations)
   {
-    while(Stations::has_next($stations)){
-      print(current($stations)->highwayid);
-      if(current($stations)->highwayid != next($stations)->highwayid)
-        return false;
-
+    $h = 0;
+    $arrlength = count($stations);
+    reset($stations);
+    var_dump($stations);
+    print(get_class($stations[0]));
+    print(gettype($stations));
+    foreach($stations as $key=>$value){
+      print($key);
+      print($value->highwayid);
     }
+      //print(current($stations)->highwayid." ");
+//      if(current($stations)->highwayid != next($stations)->highwayid) {
+//        $h += next($stations)->highwayid;
+//        prev($stations);
+//        // This is hacky, because the check on next advances the array pointer
+//        // It has to be put back in order to advance without erroring
+//      }
+      //next($stations);
+
     return true;
 
   }

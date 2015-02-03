@@ -74,7 +74,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         $point[0] = $startpt['lat'];
         $point[1] = $startpt['lng'];
         try {
-            $this->getRelatedStations($point);
+            $this->getNearbyStations($point);
         }catch (Exception $e){
             throw new RestException(400,"Given coordinates refer to stations on different highways");
         }
@@ -91,9 +91,9 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * @return array OrderedStation
      * @throws Exception
      */
-    function getRelatedStations($point){
+    function getNearbyStations($point){
 
-        $stations = OrderedStation::getStationfromCoord($point);
+        $stations = OrderedStation::getStationsFromCoord($point);
         //this type validation should probably be in a different function
         if(!Stations::checkSamehighway($stations))
             throw new Exception("Closest Stations are on different Highways");
