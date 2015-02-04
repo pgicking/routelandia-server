@@ -94,22 +94,27 @@ class Stations {
   /** Checks if all the stations are on the same highway
    *
    * Checks if all the given stations are on the same highway
-   * TODO: Move this function somewhere more appropriate
-   * @param array $stations
+   * @param array $startStations
+   * @param array $endStations
    * @return bool
+   * @internal param array $stations
    */
-  public static function checkSameHighway($stations)
+  public static function checkSameHighway($startStations,$endStations)
   {
-    $h = 0;
-    $arrlength = count($stations);
-    reset($stations);
-    var_dump($stations);
-    print(get_class($stations[0]));
-    print(gettype($stations));
-    foreach($stations as $key=>$value){
-      print($key);
-      print($value->highwayid);
+
+    foreach($startStations as $key=>$value){
+      print($value->stationid." | ");
+      print($value->highwayid." ");
     }
+    echo "\n";
+    foreach($endStations as $key=>$value){
+      print($value->stationid." | ");
+      print($value->highwayid." ");
+    }
+
+
+
+
       //print(current($stations)->highwayid." ");
 //      if(current($stations)->highwayid != next($stations)->highwayid) {
 //        $h += next($stations)->highwayid;
@@ -123,26 +128,5 @@ class Stations {
 
   }
 
-  /** Check if array has a next element
-   *
-   * check if an array has a next element
-   * NOTE: Placed here because I dont know where "misc" functions should
-   * go in our current MVC set up. I expect this needs to be moved - Peter
-   * TODO: Move this function somewhere more appropriate
-   *
-   * @param array $array
-   * @return bool
-   */
-  static function has_next($array) {
-    if (is_array($array)) {
-      if (next($array) === false) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  }
 
 }
