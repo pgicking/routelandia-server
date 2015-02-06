@@ -161,7 +161,7 @@ class OrderedStation extends Station {
    *
    * Currently will only return a single onramp, but the possibility is there...
    */
-  public static function fetchRelatedOnramps($id) {
+  public static function fetchRelatedOnramp($id) {
     return Station::fetch($id);
   }
 }
