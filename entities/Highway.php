@@ -20,44 +20,7 @@ class Highway {
   protected $startmp;
   protected $endmp;
 
-  /**
-   * @Relational\isNotColumn
-   */
-  public $fullGeoJson;
 
-
-
-  /**
-   * Gets all the stations for this highway, and concatenates their JSON segments together
-   * into a single giant JSON polyline, saving that into the $fullGeoJson field.
-   */
-  private function buildBigLine() {
-    $output = new \stdClass();
-    $output->type = "Linestring";
-    $output->coordinates = array();
-
-    try {
-      $ss = OrderedStation::fetchForHighway($this->highwayid);
-      foreach($ss as $ts) {
-        // This is sort of a bad hack. It results in the fullGeoJson object being present, but not
-        // having any coordinates.
-        // It would be preferable if the fullGeoJson was simply null if there were no stations to
-        // get coordinates from.
-        if($ts->geojson_raw) {
-          foreach($ts->geojson_raw->coordinates as $tc) {
-            $output->coordinates[] = $tc;
-          }
-        }
-      }
-    } catch (\Luracast\Restler\RestException $e) {
-      // Ignore this error, it'll simply means that the fetchForHighway()
-      // didn't return any highways. This is fine as the loop then didn't
-      // add anything to the output, and we'll just move on.
-    }
-
-
-    $this->fullGeoJson = $output;
-  }
 
   /******************************************************************************
    * STATIC CLASS METHODS
@@ -77,9 +40,6 @@ class Highway {
       throw new \Luracast\Restler\RestException(404, "No highways were found.");
     }
 
-    foreach($hs as $elem) {
-      $elem->buildBigLine();
-    }
     return $hs;
   }
 
@@ -98,7 +58,7 @@ class Highway {
     if(!$h) {
       throw new \Luracast\Restler\RestException(404, "Highway ID not found");
     }
-    $h->buildBigLine();
+
     return $h;
   }
 }
