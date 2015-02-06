@@ -7,6 +7,7 @@ Feature: Highways Controller
     And the type is "array"
     And the size of the array is 2
     And the "highwayid" property equals 9
+    And the size of the "coordinates" array is 10
     # Check it's length? (Should be 2 with our testing database)
 
   Scenario: request valid highwayid
