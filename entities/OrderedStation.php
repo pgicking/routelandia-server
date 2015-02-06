@@ -5,6 +5,9 @@ namespace Routelandia\Entities;
 use Respect\Relational\Mapper;
 use Respect\Relational\Sql;
 use Routelandia\DB;
+use Routelandia\Util;
+
+require_once"../Util.php";
 
 /**
  * Represents a single row in the orderedStations view.
@@ -134,7 +137,6 @@ class OrderedStation extends Station {
    * @return array [OrderedStation] List of ordered stations
    */
   static public function getStationsFromCoord($coord){
-    $g = new OrderedStation();
      $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[0] $coord[1])', 4326), 3857), segment_raw) <= 500");
      $ss = DB::sql()->orderedStations()->query($s)->fetchAll('Routelandia\Entities\OrderedStation');
 
@@ -150,6 +152,18 @@ class OrderedStation extends Station {
   public static function fetchForHighway($hid) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
+    print("\nDebugg: Empty DB::mapper():\n");
+    var_dump(DB::mapper());
+    print("\nDebugg: gettype() on empty DB::Mapper: ".gettype(DB::mapper()));
+    print("\nDebugg: get_class on empty DB::Mapper: ".get_class(DB::mapper()));
+
+    print("\nDebugg: Empty DB::sql():\n");
+    var_dump(DB::sql());
+    print("\nDebugg: gettype() on empty DB::sql(): ".gettype(DB::sql()));
+    print("\nDebugg: get_class on empty DB::sql(): ".get_class(DB::sql()));
+
+    print("\nDebugg: Full DB:Mapper():\n");
+
     $ss = DB::mapper()->orderedStations(array('highwayid='=>$hid))->fetchAll();
     if(!$ss) {
       throw new \Luracast\Restler\RestException(404, "No stations for the requested highway could be found");

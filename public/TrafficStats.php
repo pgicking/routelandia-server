@@ -89,18 +89,18 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      *
      * Takes in a float coordinate and returns the station object closest to that point.
      *
-     * @param array $point 2 element array with two floats
+     * @param $startPoint
+     * @param $endPoint
      * @return array OrderedStation
-     * @throws Exception
+     * @internal param array $point 2 element array with two floats
      */
     function getNearbyStations($startPoint,$endPoint){
 
         $startStations = OrderedStation::getStationsFromCoord($startPoint);
         $endStations = OrderedStation::getStationsFromCoord($endPoint);
         //this type validation should probably be in a different function
-        if(!Stations::checkSamehighway($startStations,$endStations))
-            throw new Exception("Closest Stations are on different Highways");
-        return $startStations;
+        $finalStations = Stations::ReduceStationPairings($startStations,$endStations);
+        return $finalStations;
 
     }
 

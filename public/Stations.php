@@ -3,8 +3,9 @@
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities\OrderedStation;
 use Routelandia\Entities\Detector;
+use Routelandia\Entities\Station;
 
-require_once "../Util.php";
+require_once"../Util.php";
 
 class Stations {
 
@@ -99,61 +100,71 @@ class Stations {
    * @param array $startStations
    * @param array $endStations
    * @return bool
-   * @internal param array $stations
    */
   //TODO: Join the station ids with same highwaysids into tuples, into sets by highwayids
-  public static function checkSameHighway($startStations,$endStations)
+  public static function ReduceStationPairings($startStations,$endStations)
   {
-    $listOfHighwayIds = new SplDoublyLinkedList();
-    $arrayOfHighwayIds = array()
+    //Arrange stations into tuples separate by highwayIds
+    $arrayOfHighwayIds = array();
     foreach($startStations as $skey=>$svalue)
     {
       foreach($endStations as $ekey=>$evalue)
       {
         if($svalue->highwayid == $evalue->highwayid)
         {
-          print("\nDebugg: svalue->highwayid: ".$svalue->highwayid);
-          print("\nDebugg: svalue->stationid: ".$svalue->stationid);
-          print("\nDebugg: evalue->highwayid: ".$evalue->highwayid);
-          print("\nDebugg: evalue->stationid: ".$evalue->stationid);
+//          print("\nDebugg: svalue->highwayid: ".$svalue->highwayid);
+//          print("\nDebugg: svalue->stationid: ".$svalue->stationid);
+//          print("\nDebugg: evalue->highwayid: ".$evalue->highwayid);
+//          print("\nDebugg: evalue->stationid: ".$evalue->stationid);
           $tuple[0] = $svalue->stationid;
           $tuple[1] = $evalue->stationid;
-          if(empty($arrayOfHighwayIds))
-          {
-            print("\nEmpty\n");
-            $arrayOfHighwayIds = array($svalue->highwayid => array());
-            array_push($arrayOfHighwayIds[$svalue->highwayid],$tuple);
-            var_dump($arrayOfHighwayIds);
-          }
-          else
-          {
-            print("\nFilling\n");
-            if (!array_key_exists($svalue->highwayid, $arrayOfHighwayIds))
-            {
-              //create empty index
-              array_push($arrayOfHighwayIds,$svalue->highwayid);
-              $arrayOfHighwayIds[$svalue->highwayid] = $tuple;
-            }
-            array_push($arrayOfHighwayIds[$svalue->highwayid],$tuple);
 
+          if (!array_key_exists($svalue->highwayid, $arrayOfHighwayIds))
+          {
+            //create empty index
+            $arrayOfHighwayIds[$svalue->highwayid] = array();
           }
+          array_push($arrayOfHighwayIds[$svalue->highwayid],$tuple);
+
+        }
+      }
+    }
+    //Use tuple data structure to find correct start/end pair
+//    var_dump($arrayOfHighwayIds);
+    $finalStationPair = null;
+    foreach($arrayOfHighwayIds as $highwayId => $stations) {
+//      settype($highwayId,"string");
+      print("\nDebugg: Type: ".gettype($highwayId));
+      print("\nDebugg: Value: ".$highwayId."\n");
+      //TODO: Figure out why this keeps erroring out
+      $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
+      $startCount = 0;
+      $endCount = 0;
+      foreach($arrayOfHighwayIds as $akey=>$avalue){
+        $count = 0;
+        foreach($listOfHighwayStations as $highwayStation){
+          ++$count;
+          if($avalue == $highwayStation->stationid){
+            if($startCount == 0){
+              $startCount = $count;
+              $finalStartStation = $highwayStation->stationid;
+            }
+            else{
+              $endCount = $count;
+              $finalEndStation = $highwayStation->stationid;
+            }
+            break;
+          }
+
+        }
+        if($startCount < $endCount){
+          $finalStationPair[0] = $finalStartStation;
+          $finalStationPair[1] = $finalEndStation;
         }
       }
     }
 
-    var_dump($arrayOfHighwayIds);
-    echo "\n";
-
-    while(Util::has_next($startStations)){
-      if(current($startStations)->highwayid == current($endStations)->highwayid){
-        print("Start stationid: ".current($startStations)->stationid." highwayid: ".current($startStations)->highwayid."\n");
-        print("End stationid: ".current($endStations)->stationid." highwayid: ".current($endStations)->highwayid."\n");
-      }
-
-      next($startStations);
-      next($endStations);
-    }
-
+    var_dump($finalStationPair);
     return true;
 
   }
