@@ -33,7 +33,7 @@ Feature: Stations Controller
     # And the error object properties are..
 
   Scenario: request related onramp for valid stationid
-    When I request "stations/1064/relatedonramps"
+    When I request "stations/1071/relatedonramp"
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"

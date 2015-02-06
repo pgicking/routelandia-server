@@ -5,7 +5,6 @@ Feature: Highways Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
-    And the "highwayid" property equals 9
     # Check it's length? (Should be 2 with our testing database)
 
   Scenario: request valid highwayid
