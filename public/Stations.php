@@ -68,7 +68,7 @@ class Stations {
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\Station::calculateRelatedOnrampID($id);
     try {
-    	$retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramps($retVal->relatedOnrampId);
+    	$retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramp($retVal->relatedOnrampId);
     } catch (Exception $e) {
     	$retVal->relatedOnrampInfo = null;
     }
