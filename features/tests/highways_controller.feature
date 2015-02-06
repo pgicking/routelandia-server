@@ -5,6 +5,7 @@ Feature: Highways Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
+    And the size of the "coordinates" array is 10
     # Check it's length? (Should be 2 with our testing database)
 
   Scenario: request valid highwayid
@@ -46,7 +47,7 @@ Feature: Highways Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
-
+    And the size of the array is 15
 
   Scenario: request stations for invalid highwayid
     When I request "highways/666/stations"

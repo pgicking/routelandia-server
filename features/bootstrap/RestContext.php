@@ -682,4 +682,31 @@ class RestContext extends BehatContext
     {
         $this->printDebug("$this->_request\n$this->_response");
     }
+    
+    //Definitions for features required by the Routelandia app below...
+    
+    /**
+     * @Then /^the size of the array is (\d+)$/
+     */
+        public function theSizeOfTheArrayIs($arg1)
+    {
+    	$data = $this->_data;
+    	$count = count($data);
+    	if ($count != $arg1) {
+        	throw new Exception("The array does not contain the correct number of items. Expected $count but got $arg1.");
+        }
+    }
+    
+    /**
+     * @Given /^the size of the "([^"]*)" array is (\d+)$/
+     *
+    public function theSizeOfTheArrayIs($arg1, $arg2)
+    {
+    	$data = $this->_data;
+    	$count = count($data.fullGeoJson.$arg1);
+    	print ($count);
+        throw new PendingException();
+    }*/
+
+    
 }
