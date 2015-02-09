@@ -104,8 +104,6 @@ class DB {
     DB::$mapper = new Mapper($h);
     DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
     DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
-//    print("\nVar_dump of non empty DB::database_handle:\n");
-//    var_dump(DB::$database_handle);
 
     return DB::$mapper;
   }

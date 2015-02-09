@@ -140,32 +140,50 @@ class Stations {
       $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
       $startCount = 0;
       $endCount = 0;
+      $finalHighwayId = 0;
       foreach($arrayOfHighwayIds as $akey=>$avalue){
         $count = 0;
-        foreach($listOfHighwayStations as $highwayStation){
+        foreach($listOfHighwayStations as $highwayStation) {
           ++$count;
-          if($avalue == $highwayStation->stationid){
-            if($startCount == 0){
-              $startCount = $count;
-              $finalStartStation = $highwayStation->stationid;
-            }
-            else{
-              $endCount = $count;
-              $finalEndStation = $highwayStation->stationid;
-            }
-            break;
-          }
+//          print("\nDebugg: count: " . $count);
+//          print("\nDebugg: avalue: ");
+//          print_r($avalue[0]);
+//          print(" stationid: " . $highwayStation->stationid);
+          foreach ($avalue as $stationkey => $stationvalue) {
+            for($x = 0; $x<=1;++$x) {
+              print("\nDebugg: count: " . $count);
+              print("\nDebugg: stationvalue: ");
+              print_r($stationvalue[0]);
+              print(" stationid: " . $highwayStation->stationid);
 
+              if ($stationvalue[$x] == $highwayStation->stationid) {
+                if ($startCount == 0) {
+                  $finalHighwayId = $highwayStation->highwayid;
+                  $startCount = $count;
+                  $finalStartStation = $highwayStation->stationid;
+                  print("\nDebugg: Startcount: " . $startCount);
+                  print("\nDebugg: finalstartStation: " . $finalStartStation);
+                } else {
+                  $endCount = $count;
+                  $finalEndStation = $highwayStation->stationid;
+                  print("\nDebugg: endcount: " . $endCount);
+                  print("\nDebugg: finalEndStation: " . $finalEndStation);
+                }
+              break;
+              }
+            }
+          }
         }
         if($startCount < $endCount){
           $finalStationPair[0] = $finalStartStation;
           $finalStationPair[1] = $finalEndStation;
+          $finalStationPair[2] = $finalHighwayId;
         }
       }
     }
-
+    echo "\n\n";
     var_dump($finalStationPair);
-    return true;
+    return $finalStationPair;
 
   }
 
