@@ -152,17 +152,17 @@ class OrderedStation extends Station {
   public static function fetchForHighway($hid) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
-    print("\nDebugg: Empty DB::mapper():\n");
-    var_dump(DB::mapper());
-    print("\nDebugg: gettype() on empty DB::Mapper: ".gettype(DB::mapper()));
-    print("\nDebugg: get_class on empty DB::Mapper: ".get_class(DB::mapper()));
-
-    print("\nDebugg: Empty DB::sql():\n");
-    var_dump(DB::sql());
-    print("\nDebugg: gettype() on empty DB::sql(): ".gettype(DB::sql()));
-    print("\nDebugg: get_class on empty DB::sql(): ".get_class(DB::sql()));
-
-    print("\nDebugg: Full DB:Mapper():\n");
+//    print("\nDebugg: var_dump of empty DB::mapper():\n");
+//    var_dump(DB::mapper());
+//    print("\nDebugg: gettype() on empty DB::Mapper: ".gettype(DB::mapper()));
+//    print("\nDebugg: get_class on empty DB::Mapper: ".get_class(DB::mapper()));
+//
+//    print("\nDebugg: Empty DB::sql():\n");
+//    var_dump(DB::sql());
+//    print("\nDebugg: gettype() on empty DB::sql(): ".gettype(DB::sql()));
+//    print("\nDebugg: get_class on empty DB::sql(): ".get_class(DB::sql()));
+//
+//    print("\nDebugg: Full DB:Mapper():\n");
 
     $ss = DB::mapper()->orderedStations(array('highwayid='=>$hid))->fetchAll();
     if(!$ss) {

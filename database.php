@@ -89,7 +89,6 @@ class DB {
       //  throw new DatabaseErrorException($e->getMessage());
       //}
     }
-
     return DB::$database_handle;
   }
 
@@ -97,13 +96,16 @@ class DB {
    * A singleton method to get the database as a Mapper object
    */
   public static function mapper() {
-    if(DB::$database_handle == null) {
+    $h = DB::$database_handle;
+    if($h == null) {
       $h = DB::get_database_handle();
 
-      DB::$mapper = new Mapper($h);
-      DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
-      DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
     }
+    DB::$mapper = new Mapper($h);
+    DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
+    DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
+//    print("\nVar_dump of non empty DB::database_handle:\n");
+//    var_dump(DB::$database_handle);
 
     return DB::$mapper;
   }
