@@ -76,11 +76,14 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         $endPoint[0] = $endpt['lat'];
         $endPoint[1] = $endpt['lng'];
         try {
-            $this->getNearbyStations($startPoint,$endPoint);
+            $validStations = $this->getNearbyStations($startPoint,$endPoint);
         }catch (Exception $e){
             throw new RestException(400,"Given coordinates refer to stations on different highways");
         }
         print("\n");
+
+
+
         return array($request_data);
     }
 

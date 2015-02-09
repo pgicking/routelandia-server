@@ -94,14 +94,18 @@ class Stations {
   }
 
 
-  /** Checks if all the stations are on the same highway
+  /**Takes in a list of startstations and end stations and figures out which of them are valid
    *
-   * Checks if all the given stations are on the same highway
+   * Takes in a list of start stations and end stations and validates if they're on the same highway
+   * and returns the only valid pairings (i.e. which stations properly appear after each other on a
+   * highway)
+   *
    * @param array $startStations
    * @param array $endStations
-   * @return bool
+   * @return array $finalStationPair The valid start and end stations plus their highwayid
+   * @throws \Luracast\Restler\RestException
    */
-  //TODO: Join the station ids with same highwaysids into tuples, into sets by highwayids
+
   public static function ReduceStationPairings($startStations,$endStations)
   {
     //Arrange stations into tuples separate by highwayIds
@@ -112,10 +116,6 @@ class Stations {
       {
         if($svalue->highwayid == $evalue->highwayid)
         {
-//          print("\nDebugg: svalue->highwayid: ".$svalue->highwayid);
-//          print("\nDebugg: svalue->stationid: ".$svalue->stationid);
-//          print("\nDebugg: evalue->highwayid: ".$evalue->highwayid);
-//          print("\nDebugg: evalue->stationid: ".$evalue->stationid);
           $tuple[0] = $svalue->stationid;
           $tuple[1] = $evalue->stationid;
 
@@ -130,13 +130,8 @@ class Stations {
       }
     }
     //Use tuple data structure to find correct start/end pair
-//    var_dump($arrayOfHighwayIds);
     $finalStationPair = null;
     foreach($arrayOfHighwayIds as $highwayId => $stations) {
-//      settype($highwayId,"string");
-      print("\nDebugg: Type: ".gettype($highwayId));
-      print("\nDebugg: Value: ".$highwayId."\n");
-      //TODO: Figure out why this keeps erroring out
       $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
       $startCount = 0;
       $endCount = 0;
@@ -145,29 +140,16 @@ class Stations {
         $count = 0;
         foreach($listOfHighwayStations as $highwayStation) {
           ++$count;
-//          print("\nDebugg: count: " . $count);
-//          print("\nDebugg: avalue: ");
-//          print_r($avalue[0]);
-//          print(" stationid: " . $highwayStation->stationid);
           foreach ($avalue as $stationkey => $stationvalue) {
             for($x = 0; $x<=1;++$x) {
-              print("\nDebugg: count: " . $count);
-              print("\nDebugg: stationvalue: ");
-              print_r($stationvalue[0]);
-              print(" stationid: " . $highwayStation->stationid);
-
               if ($stationvalue[$x] == $highwayStation->stationid) {
                 if ($startCount == 0) {
-                  $finalHighwayId = $highwayStation->highwayid;
+//                  $finalHighwayId = $highwayStation->highwayid;
                   $startCount = $count;
                   $finalStartStation = $highwayStation->stationid;
-                  print("\nDebugg: Startcount: " . $startCount);
-                  print("\nDebugg: finalstartStation: " . $finalStartStation);
                 } else {
                   $endCount = $count;
                   $finalEndStation = $highwayStation->stationid;
-                  print("\nDebugg: endcount: " . $endCount);
-                  print("\nDebugg: finalEndStation: " . $finalEndStation);
                 }
               break;
               }
@@ -177,12 +159,10 @@ class Stations {
         if($startCount < $endCount){
           $finalStationPair[0] = $finalStartStation;
           $finalStationPair[1] = $finalEndStation;
-          $finalStationPair[2] = $finalHighwayId;
+//          $finalStationPair[2] = $finalHighwayId;
         }
       }
     }
-    echo "\n\n";
-    var_dump($finalStationPair);
     return $finalStationPair;
 
   }
