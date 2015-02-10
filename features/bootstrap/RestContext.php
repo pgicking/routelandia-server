@@ -33,6 +33,7 @@ class RestContext extends BehatContext
     private $_charset = null;
     private $_language = null;
     private $_data = null;
+    private $requestPayload = null;
 
     private $_parameters = array();
 
@@ -744,6 +745,14 @@ class RestContext extends BehatContext
         } else {
         	throw new Exception("The data for the station is empty.");
         }
+    }
+    
+    /**
+     * @Given /^I have the payload:$/
+     */
+    public function iHaveThePayload(PyStringNode $requestPayload)
+    {
+        $this->requestPayload = $requestPayload;
     }
 
     

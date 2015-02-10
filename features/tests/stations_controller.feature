@@ -12,6 +12,16 @@ Feature: Stations Controller
     And the response is JSON
     And the type is "object"
     And the station is a station
+    And the "stationid" property equals 1118
+    And the "upstream" property equals 0
+    And the "downstream" property equals 3154
+    And the "highwayid" property equals 10
+    And the "opposite_stationid" property equals null
+    And the "milepost" property equals 0.08
+    And the "length" property equals 0.17
+    And the "locationtext" property equals Barnes SB
+    And the "linked_list_position" property equals 0
+    And the "geojson_raw.type" property equals LineString
 
   Scenario: request an invalid stationid
     When I request "stations/666"

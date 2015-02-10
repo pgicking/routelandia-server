@@ -35,4 +35,4 @@ Feature: Detectors Controller
     When I request "detectors/100059/stillactive"
     Then the response status code should be 200
     And the response is JSON
-    And the type is "object"
+    And the type is "bool"
