@@ -725,6 +725,7 @@ class RestContext extends BehatContext
         }
     }
 
+
 	/**
      * @Then /^the highway is a highway$/
      */
@@ -744,16 +745,6 @@ class RestContext extends BehatContext
         	throw new Exception("The data for the station is empty.");
         }
     }
-    /**
-     * @Given /^the size of the "([^"]*)" array is (\d+)$/
-     *
-    public function theSizeOfTheArrayIs($arg1, $arg2)
-    {
-    	$data = $this->_data;
-    	$count = count($data.fullGeoJson.$arg1);
-    	print ($count);
-        throw new PendingException();
-    }*/
 
     
 }
