@@ -1,7 +1,9 @@
 <?php
+
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Luracast\Restler\Data\String;
+
 
 /**
  * Rest context.
@@ -688,7 +690,7 @@ class RestContext extends BehatContext
     /**
      * @Then /^the size of the array is (\d+)$/
      */
-        public function theSizeOfTheArrayIs($arg1)
+    public function theSizeOfTheArrayIs($arg1)
     {
     	$data = $this->_data;
     	$count = count($data);
@@ -698,15 +700,50 @@ class RestContext extends BehatContext
     }
     
     /**
-     * @Given /^the size of the "([^"]*)" array is (\d+)$/
-     *
-    public function theSizeOfTheArrayIs($arg1, $arg2)
+     * @Then /^the station is a station$/
+     */
+    public function theStationIsAStation()
     {
     	$data = $this->_data;
-    	$count = count($data.fullGeoJson.$arg1);
-    	print ($count);
-        throw new PendingException();
-    }*/
+        if (!empty($data)) {
+			$tempStation = new stdClass;
+			$tempStation->stationid = $data->stationid;
+			$tempStation->upstream = $data->upstream;
+			$tempStation->downstream = $data->downstream;
+			$tempStation->highwayid = $data->highwayid;
+			$tempStation->opposite_stationid = $data->opposite_stationid;
+			$tempStation->milepost = $data->milepost;
+			$tempStation->length = $data->length;
+			$tempStation->locationtext = $data->locationtext;
+			$tempStation->linked_list_position = $data->linked_list_position;
+			$tempStation->geojson_raw = $data->geojson_raw;
+			if (get_object_vars($tempStation) != get_object_vars($data)) {
+				throw new Exception("The station object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the station is empty.");
+        }
+    }
+
+	    /**
+     * @Then /^the highway is a highway$/
+     */
+    public function theHighwayIsAHighway()
+    {
+    	$data = $this->_data;
+        if (!empty($data)) {
+			$tempHighway = new stdClass;
+			$tempHighway->highwayid = $data->highwayid;
+			$tempHighway->direction = $data->direction;
+			$tempHighway->highwayname = $data->highwayname;
+			$tempHighway->bound = $data->bound;
+			if (get_object_vars($tempHighway) != get_object_vars($data)) {
+				throw new Exception("The station object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the station is empty.");
+        }
+    }
 
     
 }

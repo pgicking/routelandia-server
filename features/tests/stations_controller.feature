@@ -11,6 +11,7 @@ Feature: Stations Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"
+    And the station is a station
 
   Scenario: request an invalid stationid
     When I request "stations/666"

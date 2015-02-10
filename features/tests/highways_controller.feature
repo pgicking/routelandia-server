@@ -5,7 +5,7 @@ Feature: Highways Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
-    And the size of the "coordinates" array is 10
+    And the size of the array is 2
     # Check it's length? (Should be 2 with our testing database)
 
   Scenario: request valid highwayid
@@ -17,6 +17,7 @@ Feature: Highways Controller
     And the "direction" property equals "NORTH "
     And the "highwayname" property equals "OR 217              "
     And the "bound" property equals "NB"
+    And the highway is a highway
     # Check to see if it's got properties that we want...
     # Make sure it doesn't have any EXTRA properties?
 
