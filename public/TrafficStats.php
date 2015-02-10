@@ -10,16 +10,15 @@ class TrafficStats{
 
     //To test this, use
     /*
-curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d
-'
+curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '
 {
     "startpt": {
-       "lat": -122.782818,
-       "lng": 45.446201
+       "lat": -122.78281856328249,
+       "lng": 45.44620177127501
        },
     "endpt": {
-       "lat": -122.01,
-       "lng": 45.00
+       "lat": -122.74895907829,
+       "lng": 45.424207914266
     },
     "time": {
        "midpoint": "17:30",
