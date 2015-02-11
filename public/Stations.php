@@ -56,19 +56,19 @@ class Stations {
    * @url GET {id}/relatedonramp
    */
   public function getRelatedOnramp($id) {
-	
-	try {
-		$tempStation = Stations::get($id);
-	} catch (Exception $e) {
-		throw $e;
-	}
-	$retVal = new stdClass;
+    try {
+      $tempStation = Stations::get($id);
+    } catch (Exception $e) {
+      throw $e;
+    }
+
+    $retVal = new stdClass;
     $retVal->stationid = $id;
     $retVal->relatedOnrampId = Routelandia\Entities\Station::calculateRelatedOnrampID($id);
     try {
-    	$retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramp($retVal->relatedOnrampId);
+      $retVal->relatedOnrampInfo = OrderedStation::fetchRelatedOnramp($retVal->relatedOnrampId);
     } catch (Exception $e) {
-    	$retVal->relatedOnrampInfo = null;
+      $retVal->relatedOnrampInfo = null;
     }
     return $retVal;
   }
