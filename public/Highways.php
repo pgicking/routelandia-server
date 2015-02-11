@@ -45,6 +45,12 @@ class Highways {
    * order they are in as part of the linked-list of stations representing this
    * highway.
    *
+   * NOTE: We have uncovered at least 2 highways (12 and 54) that have more than one linked-list in them!
+   *       This problem is part of the client dataset and so no workaround is available.
+   *       These cause problems in the ordering of the returned stations, as it interleaves the linked lists.
+   *       (i.e. all "first" elements, then all "second" elements...)
+   *       Clients wishing to work with these linked lists
+   *
    * @access public
    * @param int $id Highway ID
    * @return  [Station]
