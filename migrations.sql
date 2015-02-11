@@ -30,7 +30,7 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , array[stationid] as linked_list_path
            , 0 as linked_list_position  -- Start the positions at zero
     FROM stations
-    WHERE     upstream = 0
+    WHERE     upstream = 0 OR upstream IS NULL
           AND stationid >= 1000
           AND stationid < 3000
   )
