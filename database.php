@@ -67,8 +67,8 @@ class DB {
        * Creating the local_test_config with the details to connect to a testing
        * database will ensure that we can run our tests without risking damage
        * to the local database.
-	 Check if we're using the testing url, use a different database config
        */
+      // Check if we're using the testing url, use a different database config
       if(strpos($_SERVER['REQUEST_URI'], "/api-test/") === false){
         if (!file_exists('../local_config.php'))
           throw new Exception ('local_config.php does not exist and must be created!');
@@ -89,24 +89,31 @@ class DB {
       //  throw new DatabaseErrorException($e->getMessage());
       //}
     }
-
     return DB::$database_handle;
   }
 
+
+
   /**
    * A singleton method to get the database as a Mapper object
+   *
+   * Note that we do the check for null because that seems to help POST requests actually get the mapper
+   * set up correctly. Not entirely certain *WHY* POST requests manage to get a handle without setting up the
+   * mapper, but this way seems to work so we're going with it.
    */
   public static function mapper() {
-    if(DB::$database_handle == null) {
+    $h = DB::$database_handle;
+    if($h == null) {
       $h = DB::get_database_handle();
-
-      DB::$mapper = new Mapper($h);
-      DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
-      DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
     }
+    DB::$mapper = new Mapper($h);
+    DB::$mapper->setStyle(new \Routelandia\Data\Styles\PortalStyle);
+    DB::$mapper->entityNamespace = 'Routelandia\\Entities\\';
 
     return DB::$mapper;
   }
+
+
 
   /**
    * A singleton method to get the database as a SQL object

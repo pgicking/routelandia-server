@@ -97,7 +97,6 @@ class Station {
   }
 
 
-
   /**
    * Returns the ID of the onramp detector related to this station.
    *

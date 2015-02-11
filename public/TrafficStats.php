@@ -9,8 +9,24 @@ use Routelandia\Entities\OrderedStation;
 class TrafficStats{
 
     //To test this, use
-    //curl -d 'derp' http://localhost:8080/api/trafficstats/test
-    //curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '{"startPoint":"[45.44620177127501,-122.78281856328249]" ,"endPoint": "[45.481798761799084,-122.79243160039188]" }'
+    /*
+curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '
+{
+    "startpt": {
+       "lat": -122.78281856328249,
+       "lng": 45.44620177127501
+       },
+    "endpt": {
+       "lat": -122.74895907829,
+       "lng": 45.424207914266
+    },
+    "time": {
+       "midpoint": "17:30",
+       "weekday": "Thursday"
+    }
+}
+'
+     */
     /**
      * Takes in a JSON object and returns traffic calculations
      *
@@ -37,19 +53,35 @@ class TrafficStats{
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
+     * @param $startpt
+     * @param $endpt
+     * @param $time
      * @return array Spits back what it was given
      * @throws RestException
      * @url POST
      */
     // If we want to pull aprt the json payload with restler
     // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
-    public function doPOST ($request_data)
+    public function doPOST ($startpt, $endpt, $time,$request_data=null)
     {
         if (empty($request_data)) {
             throw new RestException(412, "JSON object is empty");
         }
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
+
+        $startPoint[0] = $startpt['lat'];
+        $startPoint[1] = $startpt['lng'];
+        $endPoint[0] = $endpt['lat'];
+        $endPoint[1] = $endpt['lng'];
+        try {
+            $validStations = $this->getNearbyStations($startPoint,$endPoint);
+        }catch (Exception $e){
+            throw new RestException(400,"Given coordinates refer to stations on different highways");
+        }
+        print("\n");
+
+
 
         return array($request_data);
     }
@@ -59,15 +91,18 @@ class TrafficStats{
      *
      * Takes in a float coordinate and returns the station object closest to that point.
      *
-     * @param float $point
-     * @return null|OrderedStation
+     * @param $startPoint
+     * @param $endPoint
+     * @return array OrderedStation
+     * @internal param array $point 2 element array with two floats
      */
-    function getRelatedStation($point){
-        $s = new OrderedStation();
+    function getNearbyStations($startPoint,$endPoint){
 
-        $station = $s->getStationfromCoord($point);
-
-        return $station;
+        $startStations = OrderedStation::getStationsFromCoord($startPoint);
+        $endStations = OrderedStation::getStationsFromCoord($endPoint);
+        //this type validation should probably be in a different function
+        $finalStations = Stations::ReduceStationPairings($startStations,$endStations);
+        return $finalStations;
 
     }
 

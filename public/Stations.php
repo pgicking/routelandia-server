@@ -3,6 +3,9 @@
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities\OrderedStation;
 use Routelandia\Entities\Detector;
+use Routelandia\Entities\Station;
+
+require_once"../Util.php";
 
 class Stations {
 
@@ -89,5 +92,80 @@ class Stations {
   public function getDetectors($id) {
     return Detector::fetchForStation($id);
   }
+
+
+  /**Takes in a list of startstations and end stations and figures out which of them are valid
+   *
+   * Takes in a list of start stations and end stations and validates if they're on the same highway
+   * and returns the only valid pairings (i.e. which stations properly appear after each other on a
+   * highway)
+   *
+   * @param array $startStations
+   * @param array $endStations
+   * @return array $finalStationPair The valid start and end stations plus their highwayid
+   * @throws \Luracast\Restler\RestException
+   */
+
+  public static function ReduceStationPairings($startStations,$endStations)
+  {
+    //Arrange stations into tuples separate by highwayIds
+    $arrayOfHighwayIds = array();
+    foreach($startStations as $skey=>$svalue)
+    {
+      foreach($endStations as $ekey=>$evalue)
+      {
+        if($svalue->highwayid == $evalue->highwayid)
+        {
+          $tuple[0] = $svalue->stationid;
+          $tuple[1] = $evalue->stationid;
+
+          if (!array_key_exists($svalue->highwayid, $arrayOfHighwayIds))
+          {
+            //create empty index
+            $arrayOfHighwayIds[$svalue->highwayid] = array();
+          }
+          array_push($arrayOfHighwayIds[$svalue->highwayid],$tuple);
+
+        }
+      }
+    }
+    //Use tuple data structure to find correct start/end pair
+    $finalStationPair = null;
+    foreach($arrayOfHighwayIds as $highwayId => $stations) {
+      $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
+      $startCount = 0;
+      $endCount = 0;
+      $finalHighwayId = 0;
+      foreach($arrayOfHighwayIds as $akey=>$avalue){
+        $count = 0;
+        foreach($listOfHighwayStations as $highwayStation) {
+          ++$count;
+          foreach ($avalue as $stationkey => $stationvalue) {
+            for($x = 0; $x<=1;++$x) {
+              if ($stationvalue[$x] == $highwayStation->stationid) {
+                if ($startCount == 0) {
+//                  $finalHighwayId = $highwayStation->highwayid;
+                  $startCount = $count;
+                  $finalStartStation = $highwayStation->stationid;
+                } else {
+                  $endCount = $count;
+                  $finalEndStation = $highwayStation->stationid;
+                }
+              break;
+              }
+            }
+          }
+        }
+        if($startCount < $endCount){
+          $finalStationPair[0] = $finalStartStation;
+          $finalStationPair[1] = $finalEndStation;
+//          $finalStationPair[2] = $finalHighwayId;
+        }
+      }
+    }
+    return $finalStationPair;
+
+  }
+
 
 }

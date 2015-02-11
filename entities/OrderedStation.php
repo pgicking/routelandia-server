@@ -3,7 +3,11 @@
 namespace Routelandia\Entities;
 
 use Respect\Relational\Mapper;
+use Respect\Relational\Sql;
 use Routelandia\DB;
+use Routelandia\Util;
+
+require_once"../Util.php";
 
 /**
  * Represents a single row in the orderedStations view.
@@ -81,18 +85,6 @@ class OrderedStation extends Station {
     return array_map('intval', $r);
   }
 
-  /** Will take two coordinates and return the closest station
-   *
-   * Will take two coordinates and return the closest station
-   *
-   * TODO: Pass coords into SQL query to let postGIS do the heavy lfting finding the closest station
-   *
-   * @param array $coord 2 float Coordinates from client
-   * @return [OrderedStation] [NYI]
-   */
-  public function getStationFromCoord($coord){
-    return $coord;
-  }
 
   /************************************************************
    * STATIC CLASS FUNCTIONS
@@ -134,6 +126,22 @@ class OrderedStation extends Station {
     return $s;
   }
 
+  /** Will take two coordinates and return the closest station
+   *
+   * Will take two coordinates and return the closest stations
+   *
+   * NOTE: Passed coordinates must have at least 6 significant digits or
+   * nothing will be returned
+   *
+   * @param array $coord 2 float Coordinates from client
+   * @return array [OrderedStation] List of ordered stations
+   */
+  static public function getStationsFromCoord($coord){
+     $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[0] $coord[1])', 4326), 3857), segment_raw) <= 500");
+     $ss = DB::sql()->orderedStations()->query($s)->fetchAll('Routelandia\Entities\OrderedStation');
+
+    return $ss;
+  }
 
   /**
    * Return all the stations for the highway with the given ID
