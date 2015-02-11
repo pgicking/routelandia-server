@@ -21,6 +21,8 @@ Feature: TrafficStats Controller
     Then the response status code should be 200
     When I request "GET /trafficstats.json"
     Then the response status code should be 200
+    # we need to add a test to check the contents of the response from traffic stats, it has not been defined yet.
+    
     
   # Examples of how to check values based on sending a specific payload shown here:
   # https://github.com/Luracast/Restler/blob/master/features/tests/param/type.feature#L314

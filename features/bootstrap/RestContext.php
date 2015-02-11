@@ -755,5 +755,37 @@ class RestContext extends BehatContext
         $this->requestPayload = $requestPayload;
     }
 
+    /**
+     * @Then /^the "([^"]*)" property equals (\d+\.\d+)$/
+     */
+    public function thePropertyEquals1($arg1, $arg2)
+    {
+        $data = $this->_data;
+        if ($data->$arg1 != $arg2) {
+        	throw new Exception("The $arg1 property does not equal $arg2");
+        }
+    }
+
+    /**
+     * @Then /^the "([^"]*)" property equals \'([^\']*)\'$/
+     */
+    public function thePropertyEquals2($arg1, $arg2)
+    {
+        $data = $this->_data;
+        if ($data->$arg1 != $arg2) {
+        	throw new Exception("The $arg1 property does not equal $arg2");
+        }
+    }
     
+    /**
+     * @Then /^the "([^"]*)" and "([^"]*)" property equals \'([^\']*)\'$/
+     */
+    public function theAndPropertyEquals($arg1, $arg2, $arg3)
+    {
+        $data = $this->_data;
+        if ($data->$arg1->$arg2 != $arg3) {
+        	throw new Exception("The $arg1 and $arg2 property does not equal $arg3");
+        }
+    }
+
 }
