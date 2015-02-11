@@ -2,6 +2,7 @@
 
 // Bring some things into local scope for convenience.
 use Routelandia\Entities\Highway;
+use Routelandia\Entities\HighwaysHavingStation;
 use Routelandia\Entities\OrderedStation;
 
 class Highways {
@@ -15,7 +16,7 @@ class Highways {
    * @return [Highway] A list of available highways.
    */
   function index() {
-    return Highway::fetchAll();
+    return HighwaysHavingStation::fetchAll();
   }
 
 
