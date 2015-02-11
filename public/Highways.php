@@ -2,20 +2,24 @@
 
 // Bring some things into local scope for convenience.
 use Routelandia\Entities\Highway;
+use Routelandia\Entities\HighwaysHavingStation;
 use Routelandia\Entities\OrderedStation;
 
 class Highways {
 
   /**
-   * Return a list of all available highways.
+   * Return a list of all useful highways.
    *
-   * Simply returns every row from the highways table.
+   * This returns only highways which actually have stations attached to them, since those are the only stations
+   * that are useful for our purposes.
+   * Other highways will exist, but without stations we can't use them to generate statistics, so we're pretending
+   * that they don't exist for the purpose of this list.
    *
    * @access public
    * @return [Highway] A list of available highways.
    */
   function index() {
-    return Highway::fetchAll();
+    return HighwaysHavingStation::fetchAll();
   }
 
 
@@ -40,6 +44,12 @@ class Highways {
    * Retrieves all relevant stations for the specific highway, ordered by the
    * order they are in as part of the linked-list of stations representing this
    * highway.
+   *
+   * NOTE: We have uncovered at least 2 highways (12 and 54) that have more than one linked-list in them!
+   *       This problem is part of the client dataset and so no workaround is available.
+   *       These cause problems in the ordering of the returned stations, as it interleaves the linked lists.
+   *       (i.e. all "first" elements, then all "second" elements...)
+   *       Clients wishing to work with these linked lists
    *
    * @access public
    * @param int $id Highway ID
