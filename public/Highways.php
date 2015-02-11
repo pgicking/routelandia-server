@@ -8,9 +8,12 @@ use Routelandia\Entities\OrderedStation;
 class Highways {
 
   /**
-   * Return a list of all available highways.
+   * Return a list of all useful highways.
    *
-   * Simply returns every row from the highways table.
+   * This returns only highways which actually have stations attached to them, since those are the only stations
+   * that are useful for our purposes.
+   * Other highways will exist, but without stations we can't use them to generate statistics, so we're pretending
+   * that they don't exist for the purpose of this list.
    *
    * @access public
    * @return [Highway] A list of available highways.
