@@ -705,46 +705,15 @@ class RestContext extends BehatContext
      */
     public function theStationIsAStation()
     {
-    	$data = $this->_data;
-        if (!empty($data)) {
-			$tempStation = new stdClass;
-			$tempStation->stationid = $data->stationid;
-			$tempStation->upstream = $data->upstream;
-			$tempStation->downstream = $data->downstream;
-			$tempStation->highwayid = $data->highwayid;
-			$tempStation->opposite_stationid = $data->opposite_stationid;
-			$tempStation->milepost = $data->milepost;
-			$tempStation->length = $data->length;
-			$tempStation->locationtext = $data->locationtext;
-			$tempStation->linked_list_position = $data->linked_list_position;
-			$tempStation->geojson_raw = $data->geojson_raw;
-			if (get_object_vars($tempStation) != get_object_vars($data)) {
-				throw new Exception("The station object does not have the correct fields");
-			}
-        } else {
-        	throw new Exception("The data for the station is empty.");
-        }
+    	return $this->stationChecker($this->_data);
     }
 
-
-	/**
+	    /**
      * @Then /^the highway is a highway$/
      */
     public function theHighwayIsAHighway()
     {
-    	$data = $this->_data;
-        if (!empty($data)) {
-			$tempHighway = new stdClass;
-			$tempHighway->highwayid = $data->highwayid;
-			$tempHighway->direction = $data->direction;
-			$tempHighway->highwayname = $data->highwayname;
-			$tempHighway->bound = $data->bound;
-			if (get_object_vars($tempHighway) != get_object_vars($data)) {
-				throw new Exception("The station object does not have the correct fields");
-			}
-        } else {
-        	throw new Exception("The data for the station is empty.");
-        }
+    	return $this->highwayChecker($this->_data);
     }
     
     /**
@@ -785,6 +754,80 @@ class RestContext extends BehatContext
         $data = $this->_data;
         if ($data->$arg1->$arg2 != $arg3) {
         	throw new Exception("The $arg1 and $arg2 property does not equal $arg3");
+        }
+    }
+    
+	public function stationChecker($data)
+	{
+        if (!empty($data)) {
+			$tempStation = new stdClass;
+			$tempStation->stationid = $data->stationid;
+			$tempStation->upstream = $data->upstream;
+			$tempStation->downstream = $data->downstream;
+			$tempStation->highwayid = $data->highwayid;
+			$tempStation->opposite_stationid = $data->opposite_stationid;
+			$tempStation->milepost = $data->milepost;
+			$tempStation->length = $data->length;
+			$tempStation->locationtext = $data->locationtext;
+			$tempStation->linked_list_position = $data->linked_list_position;
+			$tempStation->geojson_raw = $data->geojson_raw;
+			if (get_object_vars($tempStation) != get_object_vars($data)) {
+				throw new Exception("The station object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the station is empty.");
+        }
+    }
+    
+    public function highwayChecker($data)
+    {
+        if (!empty($data)) {
+			$tempHighway = new stdClass;
+			$tempHighway->highwayid = $data->highwayid;
+			$tempHighway->direction = $data->direction;
+			$tempHighway->highwayname = $data->highwayname;
+			$tempHighway->bound = $data->bound;
+			if (get_object_vars($tempHighway) != get_object_vars($data)) {
+				throw new Exception("The station object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the station is empty.");
+        }
+        return true;
+    }
+    
+    /**
+     * @Then /^all of the stations in the array are stations$/
+     */
+    public function allOfTheStationsInTheArrayAreStations()
+    {
+        $data = $this->_data;
+        foreach($data as $val)
+        	if (!$this->stationChecker($val)) {
+        		throw new Exception("The ");
+        	}
+    }
+
+    /**
+     * @Then /^all of the highways in the array are highways$/
+     */
+    public function allOfTheHighwaysInTheArrayAreHighways()
+    {
+        $data = $this->_data;
+        foreach($data as $val)
+        	if (!$this->highwayChecker($val)) {
+        		throw new Exception("CRAP");
+        	}
+    }
+
+    /**
+     * @Then /^the "([^"]*)" property equals null$/
+     */
+    public function thePropertyEqualsNull($arg1)
+    {
+        $data = $this->_data;
+        if ($data->$arg1 != null) {
+        	throw new Exception("crap");
         }
     }
 

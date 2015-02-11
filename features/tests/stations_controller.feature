@@ -5,6 +5,7 @@ Feature: Stations Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
+    And all of the stations in the array are stations
 
   Scenario: request a valid stationid
     When I request "stations/1118"
@@ -16,7 +17,7 @@ Feature: Stations Controller
     And the "upstream" property equals 0
     And the "downstream" property equals 3154
     And the "highwayid" property equals 10
-    #And the "opposite_stationid" property equals null
+    And the "opposite_stationid" property equals null
     And the "milepost" property equals 0.08
     And the "length" property equals 0.17
     And the "locationtext" property equals 'Barnes SB'

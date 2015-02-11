@@ -19,20 +19,24 @@ Feature: Detectors Controller
     And the type is "object"
     # And the error object properties are..
 
-  Scenario: request related station for a valid detector
-    When I request "stations/1064/detectors"
-    Then the response status code should be 200
-    And the response is JSON
-    And the type is "array"
-
-  Scenario: request related station for a invalid detector
-    When I request "stations/666/detectors"
-    Then the response status code should be 404
-    And the response is JSON
-    And the type is "object"
-
   Scenario: request the active status of a detector that is still active
     When I request "detectors/100059/stillactive"
     Then the response status code should be 200
     And the response is JSON
     And the type is "bool"
+  
+  Scenario: request a related station from a detector id
+  	When I request "detectors/100059/relatedstation"
+  	Then the response status code should be 200
+  	And the response is JSON
+  	And the station is a station
+  	And the "stationid" property equals 1064
+    And the "upstream" property equals 3155
+    And the "downstream" property equals 1063
+    And the "highwayid" property equals 9
+    And the "opposite_stationid" property equals null
+    And the "milepost" property equals 1.34
+    And the "length" property equals 0.42
+    And the "locationtext" property equals 'TV Hwy NB'
+    And the "linked_list_position" property equals 9
+    And the "geojson_raw" and "type" property equals 'LineString'
