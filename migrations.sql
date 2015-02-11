@@ -57,7 +57,7 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
     WHERE s.stationid = hs.downstream
   )
 )
-SELECT * from stations_by_highway ORDER BY linked_list_position;
+SELECT * from stations_by_highway WHERE stationid IN (SELECT stationid FROM detectors WHERE enabledflag=1) ORDER BY linked_list_position;
 
 
 -- VIEW: highwaysWithStations
