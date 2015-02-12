@@ -29,6 +29,8 @@ Feature: Stations Controller
     Then the response status code should be 404
     And the response is JSON
     And the type is "object"
+    And the "error" and "message" property equals 'Not Found: Could not find the stationID requested'
+    And the "debug" and "source" property equals 'OrderedStation.php:130 at call stage'
     # And the error object properties are..
 
   Scenario: request detectors for a valid stationid
@@ -36,12 +38,16 @@ Feature: Stations Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
+    And the size of the array is 4
+    And all of the detectors in the array are detectors
 
   Scenario: request detectors for an invalid stationid
     When I request "stations/666/detectors"
     Then the response status code should be 404
     And the response is JSON
     And the type is "object"
+    And the "error" and "message" property equals 'Not Found: No detectors for the requested Station ID could be found'
+    And the "debug" and "source" property equals 'Detector.php:84 at call stage'
     # And the error object properties are..
 
   Scenario: request related onramp for valid stationid
@@ -49,6 +55,10 @@ Feature: Stations Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "object"
+    And the "stationid" property equals 1071
+    And the "relatedOnrampId" property equals 5071
+    And the "relatedOnrampInfo" property is an object
+    And the "relatedOnrampInfo" property contains an onramp
     # And the response object properties are...
 
   Scenario: request related onramp for an invalid stationid
@@ -56,6 +66,8 @@ Feature: Stations Controller
     Then the response status code should be 404
     And the response is JSON
     And the type is "object"
+    And the "error" and "message" property equals 'Not Found'
+    And the "debug" and "source" property equals 'Routes.php:436 at route stage'
     # And the error object properties are..
     
   Scenario: request detectors for a valid stationid

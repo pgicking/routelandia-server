@@ -29,6 +29,8 @@ Feature: Highways Controller
     Then the response status code should be 404
     And the response is JSON
     And the type is "object"
+    And the "error" and "message" property equals 'Not Found: Highway ID not found'
+    And the "debug" and "source" property equals 'Highway.php:59 at call stage'
     # And the response object's properties should be...
     # (Make sure we're getting an error object that has an error and sensible messages)
 
@@ -52,10 +54,13 @@ Feature: Highways Controller
     And the response is JSON
     And the type is "array"
     And the size of the array is 15
+    And all of the stations in the array are stations
 
   Scenario: request stations for invalid highwayid
     When I request "highways/666/stations"
     Then the response status code should be 404
     And the response is JSON
     And the type is "object"
+    And the "error" and "message" property equals 'Not Found: No stations for the requested highway could be found'
+    And the "debug" and "source" property equals 'OrderedStation.php:149 at call stage'
     # And the response object's properties should be...

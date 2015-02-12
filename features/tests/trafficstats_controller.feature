@@ -22,6 +22,7 @@ Feature: TrafficStats Controller
     When I request "GET /trafficstats.json"
     Then the response status code should be 200
     # we need to add a test to check the contents of the response from traffic stats, it has not been defined yet.
+    # we will also need to make sure any additional urls are tested if they exist
     
     
   # Examples of how to check values based on sending a specific payload shown here:

@@ -701,22 +701,6 @@ class RestContext extends BehatContext
     }
     
     /**
-     * @Then /^the station is a station$/
-     */
-    public function theStationIsAStation()
-    {
-    	return $this->stationChecker($this->_data);
-    }
-
-	    /**
-     * @Then /^the highway is a highway$/
-     */
-    public function theHighwayIsAHighway()
-    {
-    	return $this->highwayChecker($this->_data);
-    }
-    
-    /**
      * @Given /^I have the payload:$/
      */
     public function iHaveThePayload(PyStringNode $requestPayload)
@@ -757,6 +741,28 @@ class RestContext extends BehatContext
         }
     }
     
+    /**
+     * @Then /^the "([^"]*)" property is an object$/
+     */
+    public function thePropertyIsAnObject($arg1)
+    {
+        $data = $this->_data;
+        if (!is_object($data->$arg1)) {
+        	throw new Exception("The $arg1 property is not an object");
+        }
+    }
+
+    /**
+     * @Then /^the "([^"]*)" property equals null$/
+     */
+    public function thePropertyEqualsNull($arg1)
+    {
+        $data = $this->_data;
+        if ($data->$arg1 != null) {
+        	throw new Exception("This is not the null we were looking for");
+        }
+    }
+    
 	public function stationChecker($data)
 	{
         if (!empty($data)) {
@@ -788,13 +794,103 @@ class RestContext extends BehatContext
 			$tempHighway->highwayname = $data->highwayname;
 			$tempHighway->bound = $data->bound;
 			if (get_object_vars($tempHighway) != get_object_vars($data)) {
-				throw new Exception("The station object does not have the correct fields");
+				throw new Exception("The highway object does not have the correct fields");
 			}
         } else {
-        	throw new Exception("The data for the station is empty.");
+        	throw new Exception("The data for the highway is empty.");
         }
         return true;
     }
+    
+	public function detectorChecker($data)
+	{
+        if (!empty($data)) {
+			$tempDetector = new stdClass;
+			$tempDetector->detectorid = $data->detectorid;
+			$tempDetector->stationid = $data->stationid;
+			$tempDetector->locationtext = $data->locationtext;
+			$tempDetector->lanenumber = $data->lanenumber;
+			$tempDetector->end_date = $data->end_date;
+			$tempDetector->start_date = $data->start_date;
+			$tempDetector->highwayid = $data->highwayid;
+			if (get_object_vars($tempDetector) != get_object_vars($data)) {
+				throw new Exception("The detector object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the detector is empty.");
+        }
+        return true;
+	}
+    
+
+	public function onrampChecker($data)
+	{
+        if (!empty($data)) {
+			$tempOnramp = new stdClass;
+			$tempOnramp->stationid = $data->stationid;
+			$tempOnramp->localjurisdiction = $data->localjurisdiction;
+			$tempOnramp->controljurisdiction = $data->controljurisdiction;
+			$tempOnramp->highwayid = $data->highwayid;
+			$tempOnramp->enabledflag = $data->enabledflag;
+			$tempOnramp->milepost = $data->milepost;
+			$tempOnramp->milelog = $data->milelog;
+			$tempOnramp->milenumber = $data->milenumber;
+			$tempOnramp->locationtext = $data->locationtext;
+			$tempOnramp->length = $data->length;			
+			$tempOnramp->upstream = $data->upstream;
+			$tempOnramp->downstream = $data->downstream;
+			$tempOnramp->stationclass = $data->stationclass;
+			$tempOnramp->segment_odot = $data->segment_odot;
+			$tempOnramp->numberlanes = $data->numberlanes;
+			$tempOnramp->gisname = $data->gisname;
+			$tempOnramp->smoothingconstant = $data->smoothingconstant;
+			$tempOnramp->bridginglimit = $data->bridginglimit;
+			$tempOnramp->length_mid = $data->length_mid;
+			$tempOnramp->segment = $data->segment;
+			$tempOnramp->downstream_mile = $data->downstream_mile;
+			$tempOnramp->upstream_mile = $data->upstream_mile;
+			$tempOnramp->agencyid = $data->agencyid;
+			$tempOnramp->opposite_stationid = $data->opposite_stationid;
+			$tempOnramp->segment_raw = $data->segment_raw;
+			$tempOnramp->segment_50k = $data->segment_50k;
+			$tempOnramp->segment_100k = $data->segment_100k;
+			$tempOnramp->segment_250k = $data->segment_250k;
+			$tempOnramp->segment_500k = $data->segment_500k;
+			$tempOnramp->segment_1000k = $data->segment_1000k;
+			$tempOnramp->point = $data->point;
+			if (get_object_vars($tempOnramp) != get_object_vars($data)) {
+				throw new Exception("The onramp object does not have the correct fields");
+			}
+        } else {
+        	throw new Exception("The data for the onramp is empty.");
+        }
+        return true;
+	}
+
+    /**
+     * @Then /^the station is a station$/
+     */
+    public function theStationIsAStation()
+    {
+    	return $this->stationChecker($this->_data);
+    }
+
+	    /**
+     * @Then /^the highway is a highway$/
+     */
+    public function theHighwayIsAHighway()
+    {
+    	return $this->highwayChecker($this->_data);
+    }
+    
+    /**
+     * @Then /^the detector is a detector$/
+     */
+    public function theDetectorIsADetector()
+    {
+        return $this->detectorChecker($this->_data);
+    }
+
     
     /**
      * @Then /^all of the stations in the array are stations$/
@@ -804,7 +900,7 @@ class RestContext extends BehatContext
         $data = $this->_data;
         foreach($data as $val)
         	if (!$this->stationChecker($val)) {
-        		throw new Exception("The ");
+        		throw new Exception("This station in the array of stations is not a station");
         	}
     }
 
@@ -816,19 +912,32 @@ class RestContext extends BehatContext
         $data = $this->_data;
         foreach($data as $val)
         	if (!$this->highwayChecker($val)) {
-        		throw new Exception("CRAP");
+        		throw new Exception("This highway in the array of highways is not a highway");
+        	}
+    }
+
+
+    /**
+     * @Then /^all of the detectors in the array are detectors$/
+     */
+    public function allOfTheDetectorsInTheArrayAreDetectors()
+    {
+        $data = $this->_data;
+        foreach($data as $val)
+        	if (!$this->detectorChecker($val)) {
+        		throw new Exception("This detector in the array of detectors is not a detector");
         	}
     }
 
     /**
-     * @Then /^the "([^"]*)" property equals null$/
+     * @Then /^the "([^"]*)" property contains an onramp$/
      */
-    public function thePropertyEqualsNull($arg1)
+    public function thePropertyContainsAnOnramp($arg1)
     {
+    	
         $data = $this->_data;
-        if ($data->$arg1 != null) {
-        	throw new Exception("crap");
-        }
+        return $this->onrampChecker($data->$arg1);
     }
+
 
 }
