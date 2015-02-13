@@ -6,8 +6,6 @@ Feature: Highways Controller
     And the response is JSON
     And the type is "array"
     And the size of the array is 2
-    And the "highwayid" property equals 9
-    And the size of the "coordinates" array is 10
     And all of the highways in the array are highways
     # Check it's length? (Should be 2 with our testing database)
 
@@ -62,5 +60,5 @@ Feature: Highways Controller
     And the response is JSON
     And the type is "object"
     And the "error" and "message" property equals 'Not Found: No stations for the requested highway could be found'
-    And the "debug" and "source" property equals 'OrderedStation.php:149 at call stage'
+    And the "debug" and "source" property equals 'OrderedStation.php:157 at call stage'
     # And the response object's properties should be...

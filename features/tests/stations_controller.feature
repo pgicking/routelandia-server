@@ -30,7 +30,7 @@ Feature: Stations Controller
     And the response is JSON
     And the type is "object"
     And the "error" and "message" property equals 'Not Found: Could not find the stationID requested'
-    And the "debug" and "source" property equals 'OrderedStation.php:130 at call stage'
+    And the "debug" and "source" property equals 'OrderedStation.php:122 at call stage'
     # And the error object properties are..
 
   Scenario: request detectors for a valid stationid

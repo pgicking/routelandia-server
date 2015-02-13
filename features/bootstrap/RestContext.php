@@ -777,12 +777,16 @@ class RestContext extends BehatContext
 			$tempStation->locationtext = $data->locationtext;
 			$tempStation->linked_list_position = $data->linked_list_position;
 			$tempStation->geojson_raw = $data->geojson_raw;
+			//foreach (get_object_vars($tempStation) as $val)
+			//	print ($val);
+			//print (get_object_vars($data));
 			if (get_object_vars($tempStation) != get_object_vars($data)) {
 				throw new Exception("The station object does not have the correct fields");
 			}
         } else {
         	throw new Exception("The data for the station is empty.");
         }
+        return true;
     }
     
     public function highwayChecker($data)
