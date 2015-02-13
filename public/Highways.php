@@ -61,4 +61,20 @@ class Highways {
     return OrderedStation::fetchForHighway($id);
   }
 
+
+  /**
+   * Show the pairs of freeways that we're working with.
+   *
+   * Every freeway should have a corresponding "opposite" freeway heading the other direction.
+   * In order to be able to color a "highway" the same color we need to know what these opposite
+   * highways are, so they can both be the same color.
+   *
+   * This will return an array of tuples, each tuple representing the paired highwayids.
+   *
+   * @url GET /pairs
+   */
+  public function getPairs() {
+    return HighwaysHavingStation::pairs();
+  }
+
 }
