@@ -82,8 +82,19 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         print("\n");
 
 
-
-        return array($request_data);
+        date_default_timezone_set('America/Los_Angeles');
+        $STUPID_DEMO_RESULT = Array();
+        $STUPID_DEMO_TIME = "15:45";
+        $STUPID_DEMO_HIGHWAYS = OrderedStation::FetchForHighway(12);
+        for($i=0; $i<12; $i++) {
+          $STUPID_DEMO_OBJ = new stdClass;
+          $STUPID_DEMO_TIME = strtotime("+15 minutes", strtotime($STUPID_DEMO_TIME));
+          $STUPID_DEMO_OBJ->time_of_day = date('h:i', $STUPID_DEMO_TIME);
+          $STUPID_DEMO_OBJ->duration = rand(2,30);
+          $STUPID_DEMO_OBJ->stations_used = $STUPID_DEMO_HIGHWAYS;
+          array_push($STUPID_DEMO_RESULT, $STUPID_DEMO_OBJ);
+        }
+        return $STUPID_DEMO_RESULT;
     }
 
     /**
