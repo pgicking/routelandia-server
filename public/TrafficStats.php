@@ -105,6 +105,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * @param $startPoint
      * @param $endPoint
      * @return array OrderedStation
+     * @throws Exception
      * @internal param array $point 2 element array with two floats
      */
     function getNearbyStations($startPoint,$endPoint){
@@ -112,7 +113,11 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         $startStations = OrderedStation::getStationsFromCoord($startPoint);
         $endStations = OrderedStation::getStationsFromCoord($endPoint);
         //this type validation should probably be in a different function
-        $finalStations = Stations::ReduceStationPairings($startStations,$endStations);
+        try {
+            $finalStations = Stations::ReduceStationPairings($startStations, $endStations);
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
         return $finalStations;
 
     }
