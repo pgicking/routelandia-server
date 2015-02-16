@@ -115,12 +115,9 @@ class Stations {
     $endError = array();
     foreach($startStations as $skey=>$svalue)
     {
-//        print("\nDebugg: In for loop");
         array_push($startError,$svalue->stationid);
       foreach($endStations as $ekey=>$evalue)
       {
-//          print("\nDebugg: In secondary nested forloop");
-//          print("\nDebugg: $svalue->highwayid == $evalue->highwayid");
         array_push($endError, $evalue->stationid);
 
         if($svalue->highwayid == $evalue->highwayid)
@@ -146,12 +143,9 @@ class Stations {
           throw new Exception("Start Stations: $startString End Stations: $endString");
       }
 
-      echo"\nDebugg: Station tuples";
-      print_r($arrayOfHighwayIds);
     //Use tuple data structure to find correct start/end pair
     $finalStationPair = null;
     foreach($arrayOfHighwayIds as $highwayId => $stations) {
-        print("\nDebugg: Fetching stations for highwayid: $highwayId");
       $listOfHighwayStations = OrderedStation::fetchForHighway($highwayId);
       $startCount = 0;
       $endCount = 0;
@@ -164,23 +158,14 @@ class Stations {
           ++$count;
           foreach ($avalue as $stationkey => $stationvalue) {
             for($x = 0; $x<=1;++$x) {
-//                print("\nDebugg: highwayStation->highwayid: $highwayStation->highwayid");
-//                print("\nDebugg: matching stationid $stationvalue[$x] against: $highwayStation->stationid");
               if ($stationvalue[$x] == $highwayStation->stationid) {
-                  print("\nDebugg: Matched stationvalue[$x]: $stationvalue[$x] with $highwayStation->stationid. Highwayid: $highwayStation->highwayid");
-//                  print("\nDebugg: highwayStation->stationid: $highwayStation->stationid");
-//                  print("\nDebugg: stationvalue[$x]: $stationvalue[$x]");
                 if ($startCount == 0) {
                   $finalHighwayId = $highwayStation->highwayid;
                   $startCount = $count;
                   $finalStartStation = $highwayStation->stationid;
-                    print("\nDebugg: Startcount is zero. Startcount now $startCount");
-                    print(" and finalstart station is: $finalStartStation");
                 } else {
                   $endCount = $count;
                   $finalEndStation = $highwayStation->stationid;
-                    print("\nDebugg: Startcount was not zero. endCount is now $endCount");
-                    print(" and finalEndStation is: $finalEndStation");
                 }
               break;
               }
@@ -190,12 +175,10 @@ class Stations {
         if($startCount < $endCount){
           $finalStationPair[0] = $finalStartStation;
           $finalStationPair[1] = $finalEndStation;
-          $finalStationPair[2] = $finalHighwayId;
+//          $finalStationPair[2] = $finalHighwayId;
         }
       }
     }
-      echo"\n";
-      var_dump($finalStationPair);
     return $finalStationPair;
 
   }
