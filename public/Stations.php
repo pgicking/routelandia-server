@@ -140,10 +140,10 @@ class Stations {
         }
       }
     }
-    print_r($startError);
       if(empty($arrayOfHighwayIds)){
-          //TODO: Figure out how to actually end the error text up the call stack
-          throw new Exception("$startError,$endError");
+          $startString = implode(",",$startError);
+          $endString = implode(",",$endError);
+          throw new Exception("StartStations: $startString\nEndString:$endError");
       }
 
       echo"\nDebugg: Station tuples";
