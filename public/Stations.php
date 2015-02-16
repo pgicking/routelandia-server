@@ -143,7 +143,7 @@ class Stations {
       if(empty($arrayOfHighwayIds)){
           $startString = implode(",",$startError);
           $endString = implode(",",$endError);
-          throw new Exception("StartStations: $startString\nEndString:$endError");
+          throw new Exception("Start Stations: $startString End Stations: $endString");
       }
 
       echo"\nDebugg: Station tuples";
