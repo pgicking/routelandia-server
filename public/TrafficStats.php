@@ -77,7 +77,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         try {
             $validStations = $this->getNearbyStations($startPoint,$endPoint);
         }catch (Exception $e){
-            throw new RestException(400,"Given coordinates refer to stations on different highways. ".$e->getMessage());
+            throw new RestException(400,$e->getMessage());
         }
         print("\n");
 
@@ -116,7 +116,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         try {
             $finalStations = Stations::ReduceStationPairings($startStations, $endStations);
         }catch (Exception $e){
-            throw new Exception($e->getMessage());
+            throw new Exception("Given coordinates refer to stations on different highways. ".$e->getMessage());
         }
         return $finalStations;
 
