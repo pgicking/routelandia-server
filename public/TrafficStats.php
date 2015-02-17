@@ -35,12 +35,12 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * <code><pre>
      * {<br />
      *  &nbsp;&nbsp; "startpt": {<br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": -122.00, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": 45.44620177127501, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": -122.78281856328249 <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;         }, <br />
      *  &nbsp;&nbsp; "endpt":   { <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": -122.01, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": 45.424207914266, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": -122.74895907829 <br />
      *  &nbsp;&nbsp;            }, <br />
      *  &nbsp;&nbsp; "time":    { <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;            "midpoint": "17:30", <br />
@@ -49,7 +49,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * }
      * </pre></code>
      *
-     * The lat and lng sholud be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
+     * The lat and lng should be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
