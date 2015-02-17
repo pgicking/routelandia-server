@@ -13,12 +13,12 @@ class TrafficStats{
 curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '
 {
     "startpt": {
-       "lat": -122.78281856328249,
-       "lng": 45.44620177127501
+       "lng": -122.78281856328249,
+       "lat": 45.44620177127501
        },
     "endpt": {
-       "lat": -122.74895907829,
-       "lng": 45.424207914266
+       "lng": -122.74895907829,
+       "lat": 45.424207914266
     },
     "time": {
        "midpoint": "17:30",
@@ -35,12 +35,12 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * <code><pre>
      * {<br />
      *  &nbsp;&nbsp; "startpt": {<br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": -122.00, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": -122.00, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": 45.00 <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;         }, <br />
      *  &nbsp;&nbsp; "endpt":   { <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": -122.01, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": -122.01, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": 45.00 <br />
      *  &nbsp;&nbsp;            }, <br />
      *  &nbsp;&nbsp; "time":    { <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;            "midpoint": "17:30", <br />
