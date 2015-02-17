@@ -79,9 +79,8 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         }catch (Exception $e){
             throw new RestException(400,$e->getMessage());
         }
+
         print("\n");
-
-
         date_default_timezone_set('America/Los_Angeles');
         $STUPID_DEMO_RESULT = Array();
         $STUPID_DEMO_TIME = "15:45";
@@ -95,6 +94,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
           array_push($STUPID_DEMO_RESULT, $STUPID_DEMO_OBJ);
         }
         return $STUPID_DEMO_RESULT;
+//        return $request_data;
     }
 
     /**
