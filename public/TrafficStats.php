@@ -80,8 +80,6 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
             throw new RestException(400,$e->getMessage());
         }
 
-        print("\n");
-
 
         date_default_timezone_set('America/Los_Angeles');
         $STUPID_DEMO_RESULT = Array();
