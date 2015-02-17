@@ -144,57 +144,5 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
 
     }
 
-    /**
-     * Takes two station id, returns traffic information
-     *
-     * Takes two station ids and calculates all the stations inbetween them
-     * to get traffic information for the segment of highway
-     *
-     * @deprecated deprecated since team meeting 1/22/15 restructured the project
-     * @param int $start
-     * @param int $end
-     * @return mixed
-     * @throws exception
-     * @url GET {start}/{end}
-     */
-    public function trafficInfo($start,$end){
-
-        $this->isValid(1091);
-        if($this->isValid($start) == false){
-            throw new exception('Invalid {$start} station id');
-        }
-        elseif ($this->isValid($end) == false){
-            throw new exception('Invalid {$end} station id');
-        }
-        else
-            return "Traffic info will go here";
-    }
-
-    /**Checks if the station id is valid
-     *
-     * Checks if the station id is valid
-     *
-     * @param int $id ID of the station
-     * @return bool True or false if it exists or not
-     */
-    function isValid($id){
-        $s = OrderedStation::fetch($id);
-        if(!$s)
-            return false;
-        else
-            return true;
-    }
-
-    /** A function created out of frustration
-     *
-     * Trying to debug why other functions aren't seen
-     * by the web, so I made this
-     *
-     * @return string
-     * @url GET sanity
-     */
-    public function sanityCheck(){
-        return "This is working";
-    }
 }
 
