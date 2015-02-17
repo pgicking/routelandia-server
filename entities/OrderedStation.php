@@ -137,7 +137,7 @@ class OrderedStation extends Station {
    * @return array [OrderedStation] List of ordered stations
    */
   static public function getStationsFromCoord($coord){
-     $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[0] $coord[1])', 4326), 3857), segment_raw) <= 500");
+     $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[1] $coord[0])', 4326), 3857), segment_raw) <= 500");
      $ss = DB::sql()->orderedStations()->query($s)->fetchAll('Routelandia\Entities\OrderedStation');
     return $ss;
   }
