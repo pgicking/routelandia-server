@@ -49,7 +49,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * }
      * </pre></code>
      *
-     * The lat and lng sholud be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
+     * The lat and lng should be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
@@ -77,8 +77,9 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         try {
             $validStations = $this->getNearbyStations($startPoint,$endPoint);
         }catch (Exception $e){
-            throw new RestException(400,"Given coordinates refer to stations on different highways");
+            throw new RestException(400,$e->getMessage());
         }
+
         print("\n");
 
 
@@ -95,6 +96,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
           array_push($STUPID_DEMO_RESULT, $STUPID_DEMO_OBJ);
         }
         return $STUPID_DEMO_RESULT;
+//        return $request_data;
     }
 
     /**
@@ -105,6 +107,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * @param $startPoint
      * @param $endPoint
      * @return array OrderedStation
+     * @throws Exception
      * @internal param array $point 2 element array with two floats
      */
     function getNearbyStations($startPoint,$endPoint){
@@ -112,7 +115,11 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         $startStations = OrderedStation::getStationsFromCoord($startPoint);
         $endStations = OrderedStation::getStationsFromCoord($endPoint);
         //this type validation should probably be in a different function
-        $finalStations = Stations::ReduceStationPairings($startStations,$endStations);
+        try {
+            $finalStations = Stations::ReduceStationPairings($startStations, $endStations);
+        }catch (Exception $e){
+            throw new Exception("Given coordinates refer to stations on different highways. ".$e->getMessage());
+        }
         return $finalStations;
 
     }

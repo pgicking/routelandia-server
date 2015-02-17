@@ -93,28 +93,36 @@ class Stations {
   }
 
 
-  /**Takes in a list of startstations and end stations and figures out which of them are valid
-   *
-   * Takes in a list of start stations and end stations and validates if they're on the same highway
-   * and returns the only valid pairings (i.e. which stations properly appear after each other on a
-   * highway)
-   *
-   * @param array $startStations
-   * @param array $endStations
-   * @return array $finalStationPair The valid start and end stations plus their highwayid
-   * @throws \Luracast\Restler\RestException
-   */
+    /**Takes in a list of startstations and end stations and figures out which of them are valid
+     *
+     * Takes in a list of start stations and end stations and validates if they're on the same highway
+     * and returns the only valid pairings (i.e. which stations properly appear after each other on a
+     * highway)
+     *
+     * @param array $startStations
+     * @param array $endStations
+     * @return array $finalStationPair The valid start and end stations plus their highwayid
+     * @throws Exception
+     */
 
   public static function ReduceStationPairings($startStations,$endStations)
   {
     //Arrange stations into tuples separate by highwayIds
     $arrayOfHighwayIds = array();
+    $x = 0;
+    $startError = array();
+    $endError = array();
     foreach($startStations as $skey=>$svalue)
     {
+        array_push($startError,$svalue->stationid);
       foreach($endStations as $ekey=>$evalue)
       {
+        array_push($endError, $evalue->stationid);
+
         if($svalue->highwayid == $evalue->highwayid)
         {
+            print($svalue->stationid);
+            print($evalue->stationid);
           $tuple[0] = $svalue->stationid;
           $tuple[1] = $evalue->stationid;
 
@@ -128,6 +136,12 @@ class Stations {
         }
       }
     }
+      if(empty($arrayOfHighwayIds)){
+          $startString = implode(",",$startError);
+          $endString = implode(",",$endError);
+          throw new Exception("Start Stations: $startString End Stations: $endString");
+      }
+
     //Use tuple data structure to find correct start/end pair
     $finalStationPair = null;
     foreach($arrayOfHighwayIds as $highwayId => $stations) {
@@ -135,6 +149,8 @@ class Stations {
       $startCount = 0;
       $endCount = 0;
       $finalHighwayId = 0;
+        $finalStartStation = 0;
+        $finalEndStation = 0;
       foreach($arrayOfHighwayIds as $akey=>$avalue){
         $count = 0;
         foreach($listOfHighwayStations as $highwayStation) {
@@ -143,7 +159,7 @@ class Stations {
             for($x = 0; $x<=1;++$x) {
               if ($stationvalue[$x] == $highwayStation->stationid) {
                 if ($startCount == 0) {
-//                  $finalHighwayId = $highwayStation->highwayid;
+                  $finalHighwayId = $highwayStation->highwayid;
                   $startCount = $count;
                   $finalStartStation = $highwayStation->stationid;
                 } else {
