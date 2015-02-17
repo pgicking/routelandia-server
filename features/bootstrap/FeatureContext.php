@@ -19,9 +19,10 @@ Behat\Gherkin\Node\TableNode;
  */
 class FeatureContext extends BehatContext
 {
+	private $_type = null;
     /**
      * Initializes context.
-     * Every scenario gets it's own context object.
+     * Every scenario gets it's own context object.te	
      *
      * @param array $parameters context parameters (set them up through behat.yml)
      */
@@ -51,6 +52,9 @@ class FeatureContext extends BehatContext
         }
 
     }
+
+	
+
 
 //
 // Place your definition and hook methods here:
