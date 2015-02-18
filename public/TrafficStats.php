@@ -53,10 +53,10 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
-     * @param $startpt
-     * @param $endpt
-     * @param $time
-     * @return array Spits back what it was given
+     * @param object $startpt Contains the keys "lat" and "lng" representing the starting point.
+     * @param object $endpt Contains the keys "lat" and "lng" representing the ending point
+     * @param object $time Contains keys for "midpoint" and "weekday"
+     * @return array A list of tuples representing time/duration results
      * @throws RestException
      * @url POST
      */
@@ -80,21 +80,30 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
             throw new RestException(400,$e->getMessage());
         }
 
+        // This is what we'll be returning... Eventually.
+        $retVal = array();
 
-        date_default_timezone_set('America/Los_Angeles');
-        $STUPID_DEMO_RESULT = Array();
-        $STUPID_DEMO_TIME = "15:45";
-        $STUPID_DEMO_HIGHWAYS = OrderedStation::FetchForHighway(12);
-        for($i=0; $i<12; $i++) {
-          $STUPID_DEMO_OBJ = new stdClass;
-          $STUPID_DEMO_TIME = strtotime("+15 minutes", strtotime($STUPID_DEMO_TIME));
-          $STUPID_DEMO_OBJ->time_of_day = date('h:i', $STUPID_DEMO_TIME);
-          $STUPID_DEMO_OBJ->duration = rand(2,30);
-          $STUPID_DEMO_OBJ->stations_used = $STUPID_DEMO_HIGHWAYS;
-          array_push($STUPID_DEMO_RESULT, $STUPID_DEMO_OBJ);
+        // Now we have 2 valid stations, known to be on the same highway linked-list.
+        // First thing we'll do is build the start and end times that we're interested in...
+        // Get the most recent DATE which has the day-of-week requested.
+        // Our time block will be the 6 weeks leading up to that date.
+        $timeBlockStart = new DateTime("last "+$time['weekday']);
+        $timeBlockEnd = new DateTime($timeBlockStart);
+        $timeBlockEnd->modify("- 6 weeks");
+
+        // Next we'll do is build a list of detectors that were live for all stations in the
+        // linked-list we've found (including and between the start and end stations)
+        $detectors = array();
+        $curStationId = $validStations[0]->stationid;
+        while($curStationId != validStations[1]['stationid']) {
+          $detectors = $detectors + Detector::fetchActiveForStationInDateRange($curStationId, $timeBlockStart, $timeBlockEnd);
         }
-        return $STUPID_DEMO_RESULT;
-//        return $request_data;
+
+        // Now that we have the detectors that were valid during that time period
+        // we can use that list of detectors, and the list of dates, to actually query
+        // the loopdata to get statistics!
+
+        return retVal;
     }
 
     /**
