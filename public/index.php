@@ -5,6 +5,9 @@ require_once "../database.php";
 
 use Luracast\Restler\Restler;
 
+// Config stuff
+date_default_timezone_set('America/Los_Angeles');
+
 $r = new Restler();  // Pass "true" to this to put Restler into production mode
 $r->addAPIClass('Highways');
 $r->addAPIClass('Stations');
