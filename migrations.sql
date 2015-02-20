@@ -30,9 +30,9 @@ CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
            , array[stationid] as linked_list_path
            , 0 as linked_list_position  -- Start the positions at zero
     FROM stations
-    WHERE     (upstream = 0 OR upstream IS NULL)
+    WHERE upstream = 0
           AND stationid >= 1000
-          AND stationid < 3000
+          AND stationid < 4000
   )
   UNION ALL  -- Needs to be union ALL because you can't compare the JSON datatypes, but this shouldn't be a problem.
   (
