@@ -30,3 +30,12 @@ is destined to be owned by the team that manages it.)
 * If you want to have the /explorer website available create a symlink in the public folder to vendor/luracast/explorer/dist
 * Configure your web server to serve the public/ folder of the project. (The project is designed to run from http://server/api/ but we'll try never to assume the /api/ part in the code.)
 
+## Test Database Installation
+* Create local database in PostgreSQL called portal_testing
+* Create extension for postgis in the portal_testing database
+* Run the following command to copy data into portal_testing: 
+ 	psql portal_testing < testingdb.sql
+* Run the following command to create the views needed for the backend: 
+	psql portal_testing < migrations.sql
+	
+	
