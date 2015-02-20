@@ -53,9 +53,9 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
-     * @param object $startpt Contains the keys "lat" and "lng" representing the starting point.
-     * @param object $endpt Contains the keys "lat" and "lng" representing the ending point
-     * @param object $time Contains keys for "midpoint" and "weekday"
+     * @param $startpt Contains the keys "lat" and "lng" representing the starting point.
+     * @param $endpt Contains the keys "lat" and "lng" representing the ending point
+     * @param $time Contains keys for "midpoint" and "weekday"
      * @return array A list of tuples representing time/duration results
      * @throws RestException
      * @url POST
