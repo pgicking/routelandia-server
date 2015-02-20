@@ -1,0 +1,3 @@
+curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '
+{"startpt":{"lat":45.527816394674936,"lng":-122.63232920318842},"endpt":{"lat":45.525892208271586,"lng":-122.57259070873262},"time":{"weekday":"Thursday","midpoint":"1:28"}}
+'
