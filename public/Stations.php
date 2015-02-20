@@ -121,8 +121,6 @@ class Stations {
 
         if($svalue->highwayid == $evalue->highwayid)
         {
-            print($svalue->stationid);
-            print($evalue->stationid);
           $tuple[0] = $svalue->stationid;
           $tuple[1] = $evalue->stationid;
 
