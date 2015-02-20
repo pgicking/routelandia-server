@@ -110,8 +110,12 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      */
     function getNearbyStations($startPoint,$endPoint){
 
-        $startStations = OrderedStation::getStationsFromCoord($startPoint);
-        $endStations = OrderedStation::getStationsFromCoord($endPoint);
+        try {
+            $startStations = OrderedStation::getStationsFromCoord($startPoint);
+            $endStations = OrderedStation::getStationsFromCoord($endPoint);
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
         //this type validation should probably be in a different function
         try {
             $finalStations = Stations::ReduceStationPairings($startStations, $endStations);

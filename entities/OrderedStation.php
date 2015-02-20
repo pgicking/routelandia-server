@@ -139,6 +139,9 @@ class OrderedStation extends Station {
   static public function getStationsFromCoord($coord){
      $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[1] $coord[0])', 4326), 3857), segment_raw) <= 500");
      $ss = DB::sql()->orderedStations()->query($s)->fetchAll('Routelandia\Entities\OrderedStation');
+     if(empty($ss)){
+         throw new \Luracast\Restler\RestException(400,"Could not find any stations within 200 meters of the given coordinates");
+     }
     return $ss;
   }
 
