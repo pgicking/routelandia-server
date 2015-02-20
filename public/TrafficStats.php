@@ -113,7 +113,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      *
      * @param $startPoint
      * @param $endPoint
-     * @return array OrderedStation
+     * @return array Station IDs for the first and last stations to use
      * @throws Exception
      * @internal param array $point 2 element array with two floats
      */
