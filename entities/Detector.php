@@ -100,9 +100,9 @@ class Detector{
   public static function fetchActiveForStationInDateRange($stationid, $startdate, $enddate) {
     return DB::sql()->select("*")->from("detectors")->where(array(
                                                             "stationid"     => $stationid,
-                                                            "start_date >=" => $startdate.format("Y-m-d"),
-                                                            "end_date <="   => $enddate.format("Y-m-d")
-                                                          ))->fetchAll(\Routelandia\Entities\Detector);
+                                                            "start_date >=" => $startdate->format("Y-m-d"),
+                                                            "end_date <="   => $enddate->format("Y-m-d")
+                                                          ))->fetchAll('\Routelandia\Entities\Detector');
   }
 
 }

@@ -5,6 +5,7 @@ use Luracast\Restler\RestException;
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
 use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\Detector;
 
 class TrafficStats{
 
@@ -69,7 +70,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         }
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
-
+        $validStations = null;
         $startPoint[0] = $startpt['lat'];
         $startPoint[1] = $startpt['lng'];
         $endPoint[0] = $endpt['lat'];
@@ -83,28 +84,33 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         // This is what we'll be returning... Eventually.
         $retVal = array();
 
-        // Now we have 2 valid stations, known to be on the same highway linked-list.
         // First thing we'll do is build the start and end times that we're interested in...
         // Get the most recent DATE which has the day-of-week requested.
         // Our time block will be the 6 weeks leading up to that date.
-        $timeBlockStart = new DateTime("last "+$time['weekday']);
-        $timeBlockEnd = new DateTime($timeBlockStart);
+        $timeBlockStart = new DateTime("last ".$time['weekday']);
+        $timeBlockEnd = clone $timeBlockStart;
         $timeBlockEnd->modify("- 6 weeks");
 
         // Next we'll do is build a list of detectors that were live for all stations in the
         // linked-list we've found (including and between the start and end stations)
+        // NOTE that we're putting utter faith in the function that determined that the end station
+        // is a valid downstream for the start station. This isn't super great, but it works for now.
         $detectors = array();
-        $curStationId = $validStations[0]->stationid;
-        while($curStationId != validStations[1]['stationid']) {
+        $curStationId = $validStations[0];
+        while($curStationId != $validStations[1]) {
           $detectors = $detectors + Detector::fetchActiveForStationInDateRange($curStationId, $timeBlockStart, $timeBlockEnd);
+          $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
         }
 
         // Now that we have the detectors that were valid during that time period
         // we can use that list of detectors, and the list of dates, to actually query
         // the loopdata to get statistics!
 
-        return retVal;
+
+        return $retVal;
     }
+
+
 
     /**
      * Takes in a float coordinate and returns the station object closest to that point.
@@ -134,6 +140,8 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         return $finalStations;
 
     }
+
+
 
     /**
      * Converts string coordinates into floats
