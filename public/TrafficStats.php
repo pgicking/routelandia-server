@@ -98,7 +98,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         $detectors = array();
         $curStationId = $validStations[0];
         while($curStationId != $validStations[1]) {
-          $detectors = $detectors + Detector::fetchActiveForStationInDateRange($curStationId, $timeBlockStart, $timeBlockEnd);
+          $detectors[] = Detector::fetchActiveForStationInDateRange($curStationId, $timeBlockStart, $timeBlockEnd);
           $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
         }
 
