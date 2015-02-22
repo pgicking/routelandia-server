@@ -51,7 +51,7 @@ Feature: Highways Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
-    And the size of the array is 15
+    And the size of the array is 13
     And all of the stations in the array are stations
 
   Scenario: request stations for invalid highwayid
@@ -60,5 +60,5 @@ Feature: Highways Controller
     And the response is JSON
     And the type is "object"
     And the "error" and "message" property equals 'Not Found: No stations for the requested highway could be found'
-    And the "debug" and "source" property equals 'OrderedStation.php:157 at call stage'
+    And the "debug" and "source" property equals 'OrderedStation.php:159 at call stage'
     # And the response object's properties should be...

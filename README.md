@@ -35,7 +35,9 @@ is destined to be owned by the team that manages it.)
 * Create extension for postgis in the portal_testing database
 * Run the following command to copy data into portal_testing: 
  	psql portal_testing < testingdb.sql
-* Run the following command to create the views needed for the backend: 
+* Run the following command to create the views needed for the backend in portal_testing: 
 	psql portal_testing < migrations.sql
+	
+	
 	
 	

@@ -696,7 +696,7 @@ class RestContext extends BehatContext
     	$data = $this->_data;
     	$count = count($data);
     	if ($count != $arg1) {
-        	throw new Exception("The array does not contain the correct number of items. Expected $count but got $arg1.");
+        	throw new Exception("The array does not contain the correct number of items. Expected $arg1 but got $count.");
         }
     }
     
