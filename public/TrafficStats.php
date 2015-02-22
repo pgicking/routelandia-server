@@ -87,9 +87,22 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         // First thing we'll do is build the start and end times that we're interested in...
         // Get the most recent DATE which has the day-of-week requested.
         // Our time block will be the 6 weeks leading up to that date.
-        $timeBlockStart = new DateTime("last ".$time['weekday']);
-        $timeBlockEnd = clone $timeBlockStart;
-        $timeBlockEnd->modify("- 6 weeks");
+        $timeBlockEnd = new DateTime("last ".$time['weekday']);
+        $timeBlockStart = clone $timeBlockEnd;
+        $timeBlockStart->modify("-6 weeks");
+
+        // Create an array of the date strings for the last 6 weeks worth of days we want.
+        // We'll use this to pull from the specific tables we want.
+        // fd_dates is for the freeway.data_yyyymmdd table name format
+        // ut_dates is for the unique table loopdata_yyyy_mm_dd table name format
+        $fd_dates = array();
+        $ut_dates = array();
+        $tDate = clone $timeBlockEnd;
+        for($i = 0; $i<6; $i++) {
+          $fd_dates[] = "freeway.data_{$tDate->format("Ymd")}";
+          $ut_dates[] = "loopdata_{$tDate->format("Y_m_d")}";
+          $tDate->modify("-1 week");
+        }
 
         // Next we'll do is build a list of detectors that were live for all stations in the
         // linked-list we've found (including and between the start and end stations)
