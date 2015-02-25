@@ -24,6 +24,8 @@
 -- Name: highways; Type: TABLE; Schema: portal; Tablespace:
 --
 
+CREATE EXTENSION postgis;
+
 CREATE TABLE highways (
     highwayid smallint PRIMARY KEY,
     direction character(6) NOT NULL,
