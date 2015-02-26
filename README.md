@@ -31,6 +31,18 @@ is destined to be owned by the team that manages it.)
 * Configure your web server to serve the public/ folder of the project. (The project is designed to run from http://server/api/ but we'll try never to assume the /api/ part in the code.)
 
 ## Test Database Installation
+* Important! You must add the following section of text to your apache2.conf file! Otherwise the URLs the tests use will not work!
+* It is at /etc/apache2/ 
+
+Alias /api-test "/var/www/capstone_2014/routelandia-server/public/"
+<Directory "/var/www/capstone_2014/routelandia-server/public">
+	Options FollowSymLinks
+	AllowOverride All
+	Order allow,deny
+	Allow from all
+	Require all granted
+</Directory> 
+
 * If the test database is being set up on a Linux or Mac system, run the script testing_database_setup_script and it will set everything up, notes are in the script itself
 * If you are setting up the system on Windows use the following instructions:
 * Create local database in PostgreSQL called portal_testing
