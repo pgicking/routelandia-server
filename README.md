@@ -30,3 +30,15 @@ is destined to be owned by the team that manages it.)
 * If you want to have the /explorer website available create a symlink in the public folder to vendor/luracast/explorer/dist
 * Configure your web server to serve the public/ folder of the project. (The project is designed to run from http://server/api/ but we'll try never to assume the /api/ part in the code.)
 
+## Test Database Installation
+* If the test database is being set up on a Linux or Mac system, run the script testing_database_setup_script and it will set everything up, notes are in the script itself
+* If you are setting up the system on Windows use the following instructions:
+* Create local database in PostgreSQL called portal_testing
+* Run the following command to copy data into portal_testing: 
+ 	psql portal_testing < testingdb.sql
+* Run the following command to create the views needed for the backend in portal_testing: 
+	psql portal_testing < migrations.sql
+	
+	
+	
+	

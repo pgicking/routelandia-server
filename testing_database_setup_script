@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# this is a script that automates the test database creation procedure,
+# running this script will drop any database called portal_testing, create
+# a new database called portal_testing and then run the two sql files that
+# create the tables and insert the data
+
+dropdb portal_testing
+createdb portal_testing
+psql portal_testing < testingdb.sql
+psql portal_testing < migrations.sql
+
+# this checks to see if there is a local_test_config.php file for the test
+# database and if not makes a copy of the local_config.php file and names
+# it local_test_config.php and then changes it to access the portal_testing
+# database. also checks to make sure there is a local_config.php file
+if [ ! -f local_test_config.php ]; then
+	echo "the local_test_config.php file does not exist, checking for the local_config.php file."
+	if [ ! -f local_config.php ]; then
+		echo "there is no local_config.php file! ABORT!"
+	else
+		echo "the local_config.php file exists, creating the local_test_config.php file now."
+    	cp local_config.php local_test_config.php
+    	sed -i.bak s/portal_staging/portal_testing/g local_test_config.php 
+    	
+    	# deletes the backup created when editing the local_test_config.php file
+		rm local_test_config.php.bak
+    fi
+else
+	echo "the local_test_config.php file exists, no need to create it."
+fi
+
+# if you remove the comment from the line below, the testing for the api will
+# run auto-magically after the testing database has been set up.
+# vendor/bin/behat

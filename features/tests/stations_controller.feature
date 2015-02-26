@@ -38,7 +38,7 @@ Feature: Stations Controller
     Then the response status code should be 200
     And the response is JSON
     And the type is "array"
-    And the size of the array is 4
+    And the size of the array is 2
     And all of the detectors in the array are detectors
 
   Scenario: request detectors for an invalid stationid
