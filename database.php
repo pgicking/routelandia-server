@@ -10,7 +10,7 @@ require_once 'PortalStyle.php';
 // in public/
 foreach (glob("../entities/*.php") as $filename)
 {
-    include $filename;
+    require_once $filename;
 }
 
 // Make "Mapper" easily accessible locally.
