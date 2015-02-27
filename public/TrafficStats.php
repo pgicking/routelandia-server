@@ -7,28 +7,10 @@ use Routelandia\Entities\OrderedStation;
 use Routelandia\Entities\Detector;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
+use Routelandia\Entities\Station;
 
 class TrafficStats{
 
-    //To test this, use
-    /*
-curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: application/json" -d '
-{
-    "startpt": {
-       "lng": -122.78281856328249,
-       "lat": 45.44620177127501
-       },
-    "endpt": {
-       "lng": -122.74895907829,
-       "lat": 45.424207914266
-    },
-    "time": {
-       "midpoint": "17:30",
-       "weekday": "Thursday"
-    }
-}
-'
-     */
     /**
      * Takes in a JSON object and returns traffic calculations
      *
@@ -37,12 +19,12 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * <code><pre>
      * {<br />
      *  &nbsp;&nbsp; "startpt": {<br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": -122.00, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lng": -122.78281856328249, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;           "lat": 45.44620177127501 <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;         }, <br />
      *  &nbsp;&nbsp; "endpt":   { <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": -122.01, <br />
-     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": 45.00 <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lng": -122.74895907829, <br />
+     *  &nbsp;&nbsp;  &nbsp;&nbsp;            "lat": 45.424207914266 <br />
      *  &nbsp;&nbsp;            }, <br />
      *  &nbsp;&nbsp; "time":    { <br />
      *  &nbsp;&nbsp;  &nbsp;&nbsp;            "midpoint": "17:30", <br />
@@ -54,10 +36,10 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * The lat and lng should be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
-     * @param array $request_data  JSON payload from client
-     * @param $startpt Contains the keys "lat" and "lng" representing the starting point.
-     * @param $endpt Contains the keys "lat" and "lng" representing the ending point
-     * @param $time Contains keys for "midpoint" and "weekday"
+     * @param array $startpt Contains the keys "lat" and "lng" representing the starting point.
+     * @param array $endpt Contains the keys "lat" and "lng" representing the ending point
+     * @param array $time Contains keys for "midpoint" and "weekday"
+     * @param array $request_data JSON payload from client
      * @return array A list of tuples representing time/duration results
      * @throws RestException
      * @url POST
@@ -223,8 +205,8 @@ END_OF_QUERY;
      *
      * Takes in a float coordinate and returns the station object closest to that point.
      *
-     * @param $startPoint
-     * @param $endPoint
+     * @param array $startPoint Array of the lat/long start point
+     * @param array $endPoint Array of the lat/long end point
      * @return array Station IDs for the first and last stations to use
      * @throws Exception
      * @internal param array $point 2 element array with two floats
@@ -239,7 +221,7 @@ END_OF_QUERY;
         }
         //this type validation should probably be in a different function
         try {
-            $finalStations = Stations::ReduceStationPairings($startStations, $endStations);
+            $finalStations = Station::ReduceStationPairings($startStations, $endStations);
         }catch (Exception $e){
             throw new Exception("Given coordinates refer to stations on different highways. ".$e->getMessage());
         }
