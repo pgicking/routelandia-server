@@ -174,4 +174,14 @@ class OrderedStation extends Station {
   public static function fetchRelatedOnramp($id) {
     return Station::fetch($id);
   }
+
+
+  /**
+   * Takes in a station ID and gives back the ID of the next station in the linked list.
+   * @param int $id The ID of the station to get downstream for.
+   * @return int The ID of the downstream station.
+   */
+  public static function getDownstreamIdFor($id) {
+    return Station::fetch($id)->downstream;
+  }
 }

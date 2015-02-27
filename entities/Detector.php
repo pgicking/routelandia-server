@@ -87,4 +87,24 @@ class Detector{
     return $d;
   }
 
+
+
+  /**
+   * Return the detectors that were active for a specific station, during a specific time range.
+   *
+   * @param int $stationid The stationid that we want to find detectors for
+   * @param DateTime $startdate The earliest date we're interested in live detectors for
+   * @param DateTime $enddate The latest date that we're interested in live detectors for
+   * @return [Detector] The detectors that were active.
+   */
+  public static function fetchActiveForStationInDateRange($stationid, $startdate, $enddate) {
+    $format_startdate = $startdate->format("Y-m-d");
+    $format_enddate = $enddate->format("Y-m-d");
+    return DB::sql()->select("*")->from("detectors")->where([
+                                                             "stationid"     => $stationid,
+                                                             "start_date <=" => $format_startdate
+                                                           ])->and("(end_date >= '{$format_enddate}' OR end_date IS NULL)")
+                                                           ->fetchAll('\Routelandia\Entities\Detector');
+  }
+
 }

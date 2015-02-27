@@ -1,10 +1,12 @@
 <?php
 
-
 use Luracast\Restler\RestException;
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities;
 use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\Detector;
+use Respect\Relational\Mapper;
+use Routelandia\DB;
 
 class TrafficStats{
 
@@ -53,10 +55,10 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
      *
      * @param array $request_data  JSON payload from client
-     * @param $startpt
-     * @param $endpt
-     * @param $time
-     * @return array Spits back what it was given
+     * @param $startpt Contains the keys "lat" and "lng" representing the starting point.
+     * @param $endpt Contains the keys "lat" and "lng" representing the ending point
+     * @param $time Contains keys for "midpoint" and "weekday"
+     * @return array A list of tuples representing time/duration results
      * @throws RestException
      * @url POST
      */
@@ -69,7 +71,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         }
          // To grab data from $request_data, syntax is
          // $request_data['startPoint'];
-
+        $validStations = null;
         $startPoint[0] = $startpt['lat'];
         $startPoint[1] = $startpt['lng'];
         $endPoint[0] = $endpt['lat'];
@@ -80,22 +82,141 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
             throw new RestException(400,$e->getMessage());
         }
 
+        // First thing we'll do is build the start and end times that we're interested in...
+        // We're given the midpoint and go 2 hours to either side of it.
+        $timeF = new DateTime($time['midpoint']);
+        $timeStart = $timeF->modify("-2 hours")->format("H:i");
+        $timeEnd = $timeF->modify("+4 hours")->format("H:i");
 
-        date_default_timezone_set('America/Los_Angeles');
-        $STUPID_DEMO_RESULT = Array();
-        $STUPID_DEMO_TIME = "15:45";
-        $STUPID_DEMO_HIGHWAYS = OrderedStation::FetchForHighway(12);
-        for($i=0; $i<12; $i++) {
-          $STUPID_DEMO_OBJ = new stdClass;
-          $STUPID_DEMO_TIME = strtotime("+15 minutes", strtotime($STUPID_DEMO_TIME));
-          $STUPID_DEMO_OBJ->time_of_day = date('h:i', $STUPID_DEMO_TIME);
-          $STUPID_DEMO_OBJ->duration = rand(2,30);
-          $STUPID_DEMO_OBJ->stations_used = $STUPID_DEMO_HIGHWAYS;
-          array_push($STUPID_DEMO_RESULT, $STUPID_DEMO_OBJ);
+        // Get the most recent DATE which has the day-of-week requested.
+        // Our time block will be the 6 weeks leading up to that date.
+        $dateBlockEnd = new DateTime("last ".$time['weekday']);
+        $dateBlockStart = clone $dateBlockEnd;
+        $dateBlockStart->modify("-6 weeks");
+
+        // Create an array of the date strings for the last 6 weeks worth of days we want.
+        // We'll use this to pull from the specific tables we want.
+        // fd_dates is for the freeway.data_yyyymmdd table name format
+        // ut_dates is for the unique table loopdata_yyyy_mm_dd table name format
+        $fd_dates = array();
+        $ut_dates = array();
+        $tDate = clone $dateBlockEnd;
+        for($i = 0; $i<6; $i++) {
+          $fd_dates[] = "freeway.data_{$tDate->format("Ymd")}";
+          $ut_dates[] = "loopdata_{$tDate->format("Y_m_d")}";
+          $tDate->modify("-1 week");
         }
-        return $STUPID_DEMO_RESULT;
-//        return $request_data;
+
+        // Next we'll do is build a list of detectors that were live for all stations in the
+        // linked-list we've found (including and between the start and end stations)
+        // NOTE that we're putting utter faith in the function that determined that the end station
+        // is a valid downstream for the start station. This isn't super great, but it works for now.
+        $detectors = array();
+        $curStationId = $validStations[0];
+        while($curStationId != $validStations[1]) {
+          $tds = Detector::fetchActiveForStationInDateRange($curStationId, $dateBlockStart, $dateBlockEnd);
+          $detectors = array_merge($detectors, $tds);
+          $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
+        }
+        $detectorstring = "(";
+        $i = count($detectors);
+        foreach($detectors as $d) {
+          $detectorstring .= "{$d->detectorid}";
+
+          $next = !!(--$i);
+          if($next) {
+            $detectorstring .= ",";
+          }
+        }
+        $detectorstring .= ")";
+
+        // Now that we have the detectors that were valid during that time period
+        // we can use that list of detectors, and the list of dates, to actually query
+        // the loopdata to get statistics!
+        // We have a big query we're going to run, but inside of it we'll need a bunch of subqueries,
+        // one for each table we're unioning. We'll build those first:
+        // Example of what we're building:
+        // SELECT detectorid,
+        //          starttime,
+        //          speed,
+        //          volume
+        //     FROM loopdata_2015_02_19
+        //     WHERE starttime::time >= '14:00'
+        //       AND starttime::time <= '19:00'
+        //       AND detectorid IN (100002, 100003, 100004, 100005)
+        // TODO: This is duplicate code that should be extracted to a function, and we should feel bad.
+        //       We're not doing that today because we're lazy declarative bastards in a hurry and trying to understand...
+        $unionstring = "";
+        $i = count($fd_dates);
+        foreach($fd_dates as $fd) {
+          $unionstring .= "\nSELECT detectorid,starttime,speed,volume FROM {$fd}";
+          $unionstring .= " WHERE starttime::time >= '{$timeStart}' AND starttime::time <= '{$timeEnd}' AND detectorid IN {$detectorstring}";
+
+          $next = !!(--$i);
+          if ($next) {
+            $unionstring .= "\nUNION";
+          }
+        }
+        // Add the union between the two sets of tables, only as long as there ARE tables in both sets.
+        if(count($fd_dates)>0 && count($ut_dates)>0) {
+          $unionstring .= "\nUNION";
+        }
+        $i = count($ut_dates);
+        foreach($ut_dates as $ut) {
+          $unionstring .= "\nSELECT detectorid,starttime,speed,volume FROM {$ut}";
+          $unionstring .= " WHERE starttime::time >= '{$timeStart}' AND starttime::time <= '{$timeEnd}' AND detectorid IN {$detectorstring}";
+
+          $next = !!(--$i);
+          if ($next) {
+            $unionstring .= "\nUNION";
+          }
+        }
+
+
+        // Now we have everything we need to build the full giant query! LET'S GO!
+        $querystring = <<< END_OF_QUERY
+       hour,
+       minute,
+       round2(median(avg_speed)) as "speed",
+       round2(median(avg_traveltime)) as "traveltime"
+  FROM
+  (
+    SELECT S.stationid,
+           S.length,
+           extract('year' from starttime) as "year",
+           extract('month' from starttime) as "month",
+           extract('day' from starttime) as "day",
+           extract('hour' from starttime) as "hour",
+           15*div(extract('minute' from starttime)::int, 15) as "minute",
+           round2(avg(D.speed)) as "avg_speed",
+           round2((S.length/avg(D.speed))*60) as "avg_traveltime"
+          FROM
+            ($unionstring
+            ) as D
+            JOIN detectors dt ON d.detectorid = dt.detectorid
+            JOIN stations S on dt.stationid = S.stationid
+          WHERE starttime::time >= '$timeStart'
+            AND starttime::time <= '$timeEnd'
+          GROUP BY S.stationid,
+                   extract('year' from starttime),
+                   extract('month' from starttime),
+                   extract('day' from starttime),
+                   extract('hour' from starttime),
+                   minute
+          ORDER BY S.stationid, year, month, day, hour, minute
+  ) AS agg_into_quarter_hour_buckets_for_each_day
+  GROUP BY hour, minute
+  ORDER BY hour, minute;
+END_OF_QUERY;
+
+
+        // So now that we have that ugly thing we can FINALLY feed it into the database and see what happens...
+        $sqlRes = DB::sql()->select($querystring)->fetchAll(array());
+
+        return $sqlRes;
     }
+
+
 
     /**
      * Takes in a float coordinate and returns the station object closest to that point.
@@ -104,7 +225,7 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
      *
      * @param $startPoint
      * @param $endPoint
-     * @return array OrderedStation
+     * @return array Station IDs for the first and last stations to use
      * @throws Exception
      * @internal param array $point 2 element array with two floats
      */
@@ -125,6 +246,8 @@ curl -X POST http://localhost:8080/api/trafficstats -H "Content-Type: applicatio
         return $finalStations;
 
     }
+
+
 
     /**
      * Converts string coordinates into floats

@@ -74,3 +74,34 @@ CREATE VIEW highwaysHavingStations AS
       AND stations.segment_raw != ''
   GROUP BY highways.highwayid
   HAVING count(distinct stations.stationid)>0;
+
+
+-- AGGREGATE: median
+-- Taken from https://wiki.postgresql.org/wiki/Aggregate_Median
+CREATE OR REPLACE FUNCTION _final_median(numeric[])
+   RETURNS numeric AS
+$$
+   SELECT AVG(val)
+   FROM (
+     SELECT val
+     FROM unnest($1) val
+     ORDER BY 1
+     LIMIT  2 - MOD(array_upper($1, 1), 2)
+     OFFSET CEIL(array_upper($1, 1) / 2.0) - 1
+   ) sub;
+$$
+LANGUAGE 'sql' IMMUTABLE;
+CREATE AGGREGATE median(numeric) (
+  SFUNC=array_append,
+  STYPE=numeric[],
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+
+
+-------------------
+-- DEVELOPER NOTE: You'll need this function in your local database, which is predefined in the production database
+-- CREATE OR REPLACE FUNCTION public.round2(double precision)
+--  RETURNS numeric
+--  LANGUAGE sql
+-- AS $function$select round(cast($1 as numeric), 2)$function$
