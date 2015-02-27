@@ -14,12 +14,6 @@ use Routelandia\DB;
  *   2000's: HOV lane detectors in vancouver. (Or maybe elsewhere later)
  *   3000's: HD Radar detectors.
  *   5000's: Onramp detectors.
- *
- * NOTE: This is defined in a file called A_Station, because the .php file
- * appears to need to come before (alphabetically) the OrderedStation class
- * declaration, otherwise OrderedStation can't seem to find the Station class.
- * This seems odd, to be sure, but I suspect it's one of the gotchas related
- * to __autoload() that the PHP docs warns you about.
  */
 class Station {
 

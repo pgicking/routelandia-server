@@ -2,6 +2,9 @@
 
 namespace Routelandia\Entities;
 
+// A bit of an ugly hack to get around the class loading order...
+require_once 'Station.php';
+
 use Respect\Relational\Mapper;
 use Respect\Relational\Sql;
 use Routelandia\DB;
