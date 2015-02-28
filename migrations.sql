@@ -1,3 +1,7 @@
+-- Create a schema to organize all the routelandia specific stuff.
+CREATE SCHEMA routelandia;
+
+
 -- VIEW: orderedStations
 -- This view creates a list of stations which are ordered by their
 -- upstream/downstream linked list properties, and limits the stations
@@ -9,8 +13,7 @@
 -- The "stationorder" column is a calculated column that uses the length
 -- off the path to determine the stations position (order) in it's linked
 -- list. (Note that each new path restarts with order 0.)
-DROP VIEW orderedStations;
-CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
+CREATE OR REPLACE VIEW routelandia.orderedStations AS WITH RECURSIVE stations_by_highway AS
 (
   (
     SELECT   stationid
@@ -66,8 +69,7 @@ SELECT * from stations_by_highway WHERE stationid IN (SELECT stationid FROM dete
 -- useless for our purposes.
 -- This also filters out any stations that don't have a segment_raw. We won't be able to draw
 -- them, so the client app doesn't want them.
-DROP VIEW highwaysHavingStations;
-CREATE VIEW highwaysHavingStations AS
+CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
   SELECT highways.*
   FROM highways
     JOIN stations ON stations.highwayid=highways.highwayid
@@ -78,7 +80,7 @@ CREATE VIEW highwaysHavingStations AS
 
 -- AGGREGATE: median
 -- Taken from https://wiki.postgresql.org/wiki/Aggregate_Median
-CREATE OR REPLACE FUNCTION _final_median(numeric[])
+CREATE OR REPLACE FUNCTION routelandia._final_median(numeric[])
    RETURNS numeric AS
 $$
    SELECT AVG(val)
@@ -91,12 +93,70 @@ $$
    ) sub;
 $$
 LANGUAGE 'sql' IMMUTABLE;
-CREATE AGGREGATE median(numeric) (
+CREATE AGGREGATE routelandia.median(numeric) (
   SFUNC=array_append,
   STYPE=numeric[],
-  FINALFUNC=_final_median,
+  FINALFUNC=routelandia._final_median,
   INITCOND='{}'
 );
+
+
+-- FUNCTION: agg_15_minute_for
+-- This function encapsulates the statistics query to get the 15-minute statistics for the given day-of-week for
+-- the given start/end times.
+--
+-- This query will return the 15-minute average for a list of detectors.
+-- The detector list should be pre-built to be inserted into this query. (Subquery to get detectors extremely detrimental to performance)
+-- In order to build it we need the following:
+--  * The list of detectors that we're interested in.
+--  * The start and end times we're interested in during those days, both in 24 hour '17:00' format.
+--    These times should be on 15 minute increments, as the query will be grouped into the 15 minute blocks. (:00, :15, :30, :45)
+--
+-- The returned "accuracy" column gives some prediction about the accuracy of the data source itself by using the 'countreadings' generated in the
+-- loopdata_5min_raw table and assuming that every countreading SHOULD be 15 if the detector was firing 100%. (5 minutes, every 20 seconds)
+--
+-- Example for calling this function: SELECT * FROM routelandia.agg_15_minute_for('{100002, 100003, 100004, 100005}'::integer[], 5, '14:00', '18:00');
+CREATE OR REPLACE FUNCTION routelandia.agg_15_minute_for(_detector_list integer[], _day_of_week numeric, _start_time time, _end_time time)
+  RETURNS TABLE (hour double precision, minute numeric, speed numeric, traveltime numeric, accuracy numeric) AS
+$func$
+SELECT hour,
+       minute,
+       round2(median(avg_speed)) as "speed",
+       round2(median(avg_traveltime)) as "traveltime",
+       round2(sum(accuracy)::float/(count(accuracy)::float)) as "accuracy"
+  FROM
+  (
+    SELECT S.stationid,
+           S.length,
+           extract('year' from starttime) as "year",
+           extract('month' from starttime) as "month",
+           extract('day' from starttime) as "day",
+           extract('hour' from starttime) as "hour",
+           15*div(extract('minute' from starttime)::int, 15) as "minute",
+           round2(avg(D.speed)) as "avg_speed",
+           round2((S.length/avg(D.speed))*60) as "avg_traveltime",
+           round2(100*(sum(countreadings)::float/(15*count(countreadings)::float))) as "accuracy"
+      FROM loopdata_5min_raw as D
+      JOIN detectors dt ON D.detectorid = dt.detectorid
+      JOIN stations S on dt.stationid = S.stationid
+      WHERE D.speed IS NOT NULL
+        AND D.speed != 0
+        AND D.detectorid =ANY($1)
+        AND D.starttime >= (now()::date - '6 weeks'::interval)
+        AND extract('dow' from D.starttime) = $2
+        AND D.starttime::time >= $3::time
+        AND D.starttime::time <= $4::time
+      GROUP BY S.stationid,
+               extract('year' from D.starttime),
+               extract('month' from D.starttime),
+               extract('day' from D.starttime),
+               extract('hour' from D.starttime),
+               minute
+      ORDER BY S.stationid, year, month, day, hour, minute
+  ) AS fifteen_minute_agg
+  GROUP BY hour, minute
+  ORDER BY hour, minute;
+$func$ LANGUAGE sql;
 
 
 -------------------
