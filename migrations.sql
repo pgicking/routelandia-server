@@ -1,3 +1,7 @@
+-- Create a schema to organize all the routelandia specific stuff.
+CREATE SCHEMA routelandia;
+
+
 -- VIEW: orderedStations
 -- This view creates a list of stations which are ordered by their
 -- upstream/downstream linked list properties, and limits the stations
@@ -9,8 +13,7 @@
 -- The "stationorder" column is a calculated column that uses the length
 -- off the path to determine the stations position (order) in it's linked
 -- list. (Note that each new path restarts with order 0.)
-DROP VIEW orderedStations;
-CREATE VIEW orderedStations AS WITH RECURSIVE stations_by_highway AS
+CREATE OR REPLACE VIEW routelandia.orderedStations AS WITH RECURSIVE stations_by_highway AS
 (
   (
     SELECT   stationid
@@ -66,8 +69,7 @@ SELECT * from stations_by_highway WHERE stationid IN (SELECT stationid FROM dete
 -- useless for our purposes.
 -- This also filters out any stations that don't have a segment_raw. We won't be able to draw
 -- them, so the client app doesn't want them.
-DROP VIEW highwaysHavingStations;
-CREATE VIEW highwaysHavingStations AS
+CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
   SELECT highways.*
   FROM highways
     JOIN stations ON stations.highwayid=highways.highwayid
@@ -78,7 +80,7 @@ CREATE VIEW highwaysHavingStations AS
 
 -- AGGREGATE: median
 -- Taken from https://wiki.postgresql.org/wiki/Aggregate_Median
-CREATE OR REPLACE FUNCTION _final_median(numeric[])
+CREATE OR REPLACE FUNCTION routelandia._final_median(numeric[])
    RETURNS numeric AS
 $$
    SELECT AVG(val)
@@ -91,10 +93,10 @@ $$
    ) sub;
 $$
 LANGUAGE 'sql' IMMUTABLE;
-CREATE AGGREGATE median(numeric) (
+CREATE AGGREGATE routelandia.median(numeric) (
   SFUNC=array_append,
   STYPE=numeric[],
-  FINALFUNC=_final_median,
+  FINALFUNC=routelandia._final_median,
   INITCOND='{}'
 );
 
