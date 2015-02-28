@@ -66,28 +66,18 @@ class TrafficStats{
 
         // First thing we'll do is build the start and end times that we're interested in...
         // We're given the midpoint and go 2 hours to either side of it.
+        // We also need to know the integer (0=sunday) day of week it is...
         $timeF = new DateTime($time['midpoint']);
         $timeStart = $timeF->modify("-2 hours")->format("H:i");
         $timeEnd = $timeF->modify("+4 hours")->format("H:i");
+        $timeF->modify("this {$time['weekday']}");
+        $dow = intval($timeF->format("w"));
 
         // Get the most recent DATE which has the day-of-week requested.
         // Our time block will be the 6 weeks leading up to that date.
         $dateBlockEnd = new DateTime("last ".$time['weekday']);
         $dateBlockStart = clone $dateBlockEnd;
         $dateBlockStart->modify("-6 weeks");
-
-        // Create an array of the date strings for the last 6 weeks worth of days we want.
-        // We'll use this to pull from the specific tables we want.
-        // fd_dates is for the freeway.data_yyyymmdd table name format
-        // ut_dates is for the unique table loopdata_yyyy_mm_dd table name format
-        $fd_dates = array();
-        $ut_dates = array();
-        $tDate = clone $dateBlockEnd;
-        for($i = 0; $i<6; $i++) {
-          $fd_dates[] = "freeway.data_{$tDate->format("Ymd")}";
-          $ut_dates[] = "loopdata_{$tDate->format("Y_m_d")}";
-          $tDate->modify("-1 week");
-        }
 
         // Next we'll do is build a list of detectors that were live for all stations in the
         // linked-list we've found (including and between the start and end stations)
@@ -100,7 +90,7 @@ class TrafficStats{
           $detectors = array_merge($detectors, $tds);
           $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
         }
-        $detectorstring = "(";
+        $detectorstring = "{";
         $i = count($detectors);
         foreach($detectors as $d) {
           $detectorstring .= "{$d->detectorid}";
@@ -110,92 +100,15 @@ class TrafficStats{
             $detectorstring .= ",";
           }
         }
-        $detectorstring .= ")";
+        $detectorstring .= "}";
 
         // Now that we have the detectors that were valid during that time period
-        // we can use that list of detectors, and the list of dates, to actually query
-        // the loopdata to get statistics!
-        // We have a big query we're going to run, but inside of it we'll need a bunch of subqueries,
-        // one for each table we're unioning. We'll build those first:
-        // Example of what we're building:
-        // SELECT detectorid,
-        //          starttime,
-        //          speed,
-        //          volume
-        //     FROM loopdata_2015_02_19
-        //     WHERE starttime::time >= '14:00'
-        //       AND starttime::time <= '19:00'
-        //       AND detectorid IN (100002, 100003, 100004, 100005)
-        // TODO: This is duplicate code that should be extracted to a function, and we should feel bad.
-        //       We're not doing that today because we're lazy declarative bastards in a hurry and trying to understand...
-        $unionstring = "";
-        $i = count($fd_dates);
-        foreach($fd_dates as $fd) {
-          $unionstring .= "\nSELECT detectorid,starttime,speed,volume FROM {$fd}";
-          $unionstring .= " WHERE starttime::time >= '{$timeStart}' AND starttime::time <= '{$timeEnd}' AND detectorid IN {$detectorstring}";
+        $qRes = DB::sql()->select("*")->from("agg_15_minute_for('{$detectorstring}'::integer[], {$dow}, '{$timeStart}', '{$timeEnd}')")->fetchAll(array());
 
-          $next = !!(--$i);
-          if ($next) {
-            $unionstring .= "\nUNION ALL";
-          }
-        }
-        // Add the union between the two sets of tables, only as long as there ARE tables in both sets.
-        if(count($fd_dates)>0 && count($ut_dates)>0) {
-          $unionstring .= "\nUNION ALL";
-        }
-        $i = count($ut_dates);
-        foreach($ut_dates as $ut) {
-          $unionstring .= "\nSELECT detectorid,starttime,speed,volume FROM {$ut}";
-          $unionstring .= " WHERE starttime::time >= '{$timeStart}' AND starttime::time <= '{$timeEnd}' AND detectorid IN {$detectorstring}";
+        $retVal = new stdClass;
+        $retVal->results = $qRes;
 
-          $next = !!(--$i);
-          if ($next) {
-            $unionstring .= "\nUNION ALL";
-          }
-        }
-
-
-        // Now we have everything we need to build the full giant query! LET'S GO!
-        $querystring = <<< END_OF_QUERY
-       hour,
-       minute,
-       round2(median(avg_speed)) as "speed",
-       round2(median(avg_traveltime)) as "traveltime"
-  FROM
-  (
-    SELECT S.stationid,
-           S.length,
-           extract('year' from starttime) as "year",
-           extract('month' from starttime) as "month",
-           extract('day' from starttime) as "day",
-           extract('hour' from starttime) as "hour",
-           15*div(extract('minute' from starttime)::int, 15) as "minute",
-           round2(avg(D.speed)) as "avg_speed",
-           round2((S.length/avg(D.speed))*60) as "avg_traveltime"
-          FROM
-            ($unionstring
-            ) as D
-            JOIN detectors dt ON d.detectorid = dt.detectorid
-            JOIN stations S on dt.stationid = S.stationid
-          WHERE starttime::time >= '$timeStart'
-            AND starttime::time <= '$timeEnd'
-          GROUP BY S.stationid,
-                   extract('year' from starttime),
-                   extract('month' from starttime),
-                   extract('day' from starttime),
-                   extract('hour' from starttime),
-                   minute
-          ORDER BY S.stationid, year, month, day, hour, minute
-  ) AS agg_into_quarter_hour_buckets_for_each_day
-  GROUP BY hour, minute
-  ORDER BY hour, minute;
-END_OF_QUERY;
-
-
-        // So now that we have that ugly thing we can FINALLY feed it into the database and see what happens...
-        $sqlRes = DB::sql()->select($querystring)->fetchAll(array());
-
-        return $sqlRes;
+        return $retVal;
     }
 
 
