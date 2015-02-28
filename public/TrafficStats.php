@@ -84,11 +84,17 @@ class TrafficStats{
         // NOTE that we're putting utter faith in the function that determined that the end station
         // is a valid downstream for the start station. This isn't super great, but it works for now.
         $detectors = array();
+        $stations = array();
         $curStationId = $validStations[0];
-        while($curStationId != $validStations[1]) {
+        while($curStationId != null) {
+          $stations[] = $curStationId;
           $tds = Detector::fetchActiveForStationInDateRange($curStationId, $dateBlockStart, $dateBlockEnd);
           $detectors = array_merge($detectors, $tds);
-          $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
+          if($curStationId == $validStations[1]) {
+            $curStationId = null; // Kick out of the loop
+          } else {
+            $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
+          }
         }
         $detectorstring = "{";
         $i = count($detectors);
@@ -105,7 +111,17 @@ class TrafficStats{
         // Now that we have the detectors that were valid during that time period
         $qRes = DB::sql()->select("*")->from("agg_15_minute_for('{$detectorstring}'::integer[], {$dow}, '{$timeStart}', '{$timeEnd}')")->fetchAll(array());
 
+        $aboutQuery = new stdClass;
+        $aboutQuery->stations = $stations;
+        $aboutQuery->detectorString = $detectorstring;
+        $aboutQuery->dateBlockStart = $dateBlockStart;
+        $aboutQuery->dateBlockEnd = $dateBlockEnd;
+        $aboutQuery->dow = $dow;
+        $aboutQuery->timeStart = $timeStart;
+        $aboutQuery->timeEnd = $timeEnd;
+
         $retVal = new stdClass;
+        $retVal->query = $aboutQuery;
         $retVal->results = $qRes;
 
         return $retVal;
