@@ -136,12 +136,12 @@ class TrafficStats{
 
           $next = !!(--$i);
           if ($next) {
-            $unionstring .= "\nUNION";
+            $unionstring .= "\nUNION ALL";
           }
         }
         // Add the union between the two sets of tables, only as long as there ARE tables in both sets.
         if(count($fd_dates)>0 && count($ut_dates)>0) {
-          $unionstring .= "\nUNION";
+          $unionstring .= "\nUNION ALL";
         }
         $i = count($ut_dates);
         foreach($ut_dates as $ut) {
@@ -150,7 +150,7 @@ class TrafficStats{
 
           $next = !!(--$i);
           if ($next) {
-            $unionstring .= "\nUNION";
+            $unionstring .= "\nUNION ALL";
           }
         }
 

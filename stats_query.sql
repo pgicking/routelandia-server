@@ -33,7 +33,7 @@ SELECT hour,
                 WHERE starttime::time >= '14:00'
                   AND starttime::time <= '19:00'
                   AND detectorid IN (100002, 100003, 100004, 100005)
-              UNION
+              UNION ALL
               SELECT detectorid,
                      starttime,
                      speed,
@@ -42,7 +42,7 @@ SELECT hour,
                 WHERE starttime::time >= '14:00'
                 AND starttime::time <= '19:00'
                 AND detectorid IN (100002, 100003, 100004, 100005)
-              UNION
+              UNION ALL
               SELECT detectorid,
                      starttime,
                      speed,
@@ -51,7 +51,7 @@ SELECT hour,
                 WHERE starttime::time >= '14:00'
                   AND starttime::time <= '19:00'
                   AND detectorid IN (100002, 100003, 100004, 100005)
-              UNION
+              UNION ALL
               SELECT detectorid,
                      starttime,
                      speed,
