@@ -27,10 +27,13 @@ is destined to be owned by the team that manages it.)
     $DB_USER = "username";
     $DB_PASSWORD = "password";
   ```
+* Run the migrations.sql file to add routelandia specific content to the production database.
+NOTE: The views/functions added to the production database in the next step are put into a schema called "routelandia", so you'll need to make sure that the database user that is connecting has this schema in their search path.
 * If you want to have the /explorer website available create a symlink in the public folder to vendor/luracast/explorer/dist
 * Configure your web server to serve the public/ folder of the project. (The project is designed to run from http://server/api/ but we'll try never to assume the /api/ part in the code.)
 
-## Test Database Installation
+
+## Testing Database Installation
 * Important! You must add the following section of text to your apache2.conf file! Otherwise the URLs the tests use will not work!
 * It is at /etc/apache2/ 
 
