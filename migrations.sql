@@ -119,6 +119,10 @@ CREATE AGGREGATE routelandia.median(numeric) (
 CREATE OR REPLACE FUNCTION routelandia.agg_15_minute_for(_detector_list integer[], _day_of_week numeric, _start_time time, _end_time time)
   RETURNS TABLE (hour double precision, minute numeric, speed numeric, traveltime numeric, accuracy numeric) AS
 $func$
+-- Outer groups all the 15 minute buckets by day, leaving only buckets for TIMEs.
+-- i.e. 5 days worth of 13:00-13:15 become a single row for 13:00
+-- This query only returns the number of results for however many 15 minute intervals are between the start and end times.
+-- We use the Median for traveltime to throw out extreme outliers and give a better general picture of the last 6 weeks.
 SELECT hour,
        minute,
        round2(median(avg_speed)) as "speed",
@@ -126,34 +130,54 @@ SELECT hour,
        round2(sum(accuracy)::float/(count(accuracy)::float)) as "accuracy"
   FROM
   (
-    SELECT S.stationid,
-           S.length,
-           extract('year' from starttime) as "year",
-           extract('month' from starttime) as "month",
-           extract('day' from starttime) as "day",
-           extract('hour' from starttime) as "hour",
-           15*div(extract('minute' from starttime)::int, 15) as "minute",
-           round2(avg(D.speed)) as "avg_speed",
-           round2((S.length/avg(D.speed))*60) as "avg_traveltime",
-           round2(100*(sum(countreadings)::float/(15*count(countreadings)::float))) as "accuracy"
-      FROM loopdata_5min_raw as D
-      JOIN detectors dt ON D.detectorid = dt.detectorid
-      JOIN stations S on dt.stationid = S.stationid
-      WHERE D.speed IS NOT NULL
-        AND D.speed != 0
-        AND D.detectorid =ANY($1)
-        AND D.starttime >= (now()::date - '6 weeks'::interval)
-        AND extract('dow' from D.starttime) = $2
-        AND D.starttime::time >= $3::time
-        AND D.starttime::time <= $4::time
-      GROUP BY S.stationid,
-               extract('year' from D.starttime),
-               extract('month' from D.starttime),
-               extract('day' from D.starttime),
-               extract('hour' from D.starttime),
-               minute
-      ORDER BY S.stationid, year, month, day, hour, minute
-  ) AS fifteen_minute_agg
+    -- Middle query takes the results and groups them by time, collapsing the stations out of the result
+    -- and allowing us to do the total traveltime across the entire route.
+    SELECT hour,                                          -- Group-by of a group-by, stays the same
+           minute,                                        -- Group-by of a group-by, stays the same
+           avg(avg_speed) as "avg_speed",                 -- The average of all stations
+           sum(avg_traveltime) as "avg_traveltime",       -- The SUM of the average of all stations is the total traveltime for the entire length
+           avg(accuracy) as "accuracy"                    -- The average of the accuracy for each station... Close enough.
+      FROM
+      (
+        -- Inner query retrieves the results for the requested detectors over the last 6 weeks.
+        -- Each row this query is a 15 minute bucket for a station and has the following information:
+        --  * The stationid for the station
+        --  * the length of the station
+        --  * The time of the bucket, broken up down into individual columns.
+        --  * the average speed over all detectors in the station in this 15 minutes
+        --  * an avg traveltime for this station in this 15 minute interval by averaging all results for all detectors in the station
+        --  * a measurement of the accuracy of the result, based on the idea that a 15 minute interval should have a specific number of
+        --    of readings taken. If there are fewer readings than there should be then we have some missing data, and thus inaccuracy.
+        SELECT S.stationid,
+               S.length,
+               extract('year' from starttime) as "year",
+               extract('month' from starttime) as "month",
+               extract('day' from starttime) as "day",
+               extract('hour' from starttime) as "hour",
+               15*div(extract('minute' from starttime)::int, 15) as "minute",
+               round2(avg(D.speed)) as "avg_speed",
+               round2((S.length/avg(D.speed))*60) as "avg_traveltime",
+               round2(100*(sum(countreadings)::float/(15*count(countreadings)::float))) as "accuracy"
+          FROM loopdata_5min_raw as D
+          JOIN detectors dt ON D.detectorid = dt.detectorid
+          JOIN stations S on dt.stationid = S.stationid
+          WHERE D.speed IS NOT NULL
+            AND D.speed != 0
+            AND D.detectorid =ANY($1)
+            AND D.starttime >= (now()::date - '6 weeks'::interval)
+            AND extract('dow' from D.starttime) = $2
+            AND D.starttime::time >= $3::time
+            AND D.starttime::time <= $4::time
+          GROUP BY S.stationid,
+                   extract('year' from D.starttime),
+                   extract('month' from D.starttime),
+                   extract('day' from D.starttime),
+                   extract('hour' from D.starttime),
+                   minute
+          ORDER BY S.stationid, year, month, day, hour, minute
+      ) AS fifteen_minute_agg
+      GROUP BY year, month, day, hour, minute
+  ) AS by_full_day_and_time_agg
   GROUP BY hour, minute
   ORDER BY hour, minute;
 $func$ LANGUAGE sql;
