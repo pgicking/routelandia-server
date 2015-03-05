@@ -8,6 +8,7 @@ use Routelandia\Entities\Detector;
 use Respect\Relational\Mapper;
 use Routelandia\DB;
 use Routelandia\Entities\Station;
+use Routelandia\Entities\ApiResult;
 
 class TrafficStats{
 
@@ -122,9 +123,10 @@ class TrafficStats{
 
         $retVal = new stdClass;
         $retVal->query = $aboutQuery;
-        $retVal->results = $qRes;
+        //$retVal->results = $qRes;
 
-        return $retVal;
+        return new ApiResult($retVal);
+        //return $retVal;
     }
 
 

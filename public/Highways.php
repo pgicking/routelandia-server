@@ -4,6 +4,7 @@
 use Routelandia\Entities\Highway;
 use Routelandia\Entities\HighwaysHavingStation;
 use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\ApiResult;
 
 class Highways {
 
@@ -19,7 +20,7 @@ class Highways {
    * @return [Highway] A list of available highways.
    */
   function index() {
-    return HighwaysHavingStation::fetchAll();
+    return new ApiResult(HighwaysHavingStation::fetchAll());
   }
 
 
@@ -34,7 +35,7 @@ class Highways {
    */
   //Do NOT change the return statement to @return Highway [Highway] unless you want a bad day
   function get($id) {
-    return Highway::fetch($id);
+    return new ApiResult(Highway::fetch($id));
   }
 
 
@@ -58,7 +59,7 @@ class Highways {
    * @url GET {id}/stations
    */
   public function getStations($id) {
-    return OrderedStation::fetchForHighway($id);
+    return new ApiResult(OrderedStation::fetchForHighway($id));
   }
 
 
@@ -74,7 +75,7 @@ class Highways {
    * @url GET /pairs
    */
   public function getPairs() {
-    return HighwaysHavingStation::pairs();
+    return new ApiResult(HighwaysHavingStation::pairs());
   }
 
 }
