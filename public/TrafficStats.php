@@ -68,6 +68,13 @@ class TrafficStats{
         // We're given the midpoint and go 2 hours to either side of it.
         // We also need to know the integer (0=sunday) day of week it is...
         $timeF = new DateTime($time['midpoint']);
+
+        //round to nearest 15 minutes
+        $minute = $timeF->format("i");
+        $hour = $timeF->format("H");
+        $minute = round(($minute / 15)) * 15;
+        $timeF->setTime($hour,$minute);
+
         $timeStart = $timeF->modify("-2 hours")->format("H:i");
         $timeEnd = $timeF->modify("+4 hours")->format("H:i");
         $timeF->modify("this {$time['weekday']}");
