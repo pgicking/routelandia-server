@@ -34,17 +34,17 @@ class TrafficStats{
      * </pre></code>
      *
      * The lat and lng should be sent as numbers. Midpoint should be sent in the form "17:30".
-     * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
-     *
-     * Possible response codes:
-     * 200 - No errors
-     *
-     * 400 - Couldn't get stations from users given taps, user somehow tapped more than 200 meters away from a station
-     *     - Given stations refer to different highways, please choose only one highway
-     *
-     * 404 - Couldn't find the requested object, usually because the given ID doesnt exist in the database
-     *
-     * 412 - The sent JSON object is empty
+     * The weekday parameter should be a text string with the name of the day of the week to run statistics on.<br />
+     * <br />
+     * Possible response codes:<br />
+     * 200 - No errors<br />
+     *<br />
+     * 400 - Couldn't get stations from users given taps, user somehow tapped more than 200 meters away from a station<br />
+     * 400 - Given stations refer to different highways, please choose only one highway<br />
+     *<br />
+     * 404 - Couldn't find the requested object, usually because the given ID doesnt exist in the database<br />
+     *<br />
+     * 412 - The sent JSON object is empty<br />
      *
      * @param array $startpt Contains the keys "lat" and "lng" representing the starting point.
      * @param array $endpt Contains the keys "lat" and "lng" representing the ending point
