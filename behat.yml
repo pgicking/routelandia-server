@@ -2,4 +2,4 @@
 default:
     context:
         parameters:
-            base_url: http://localhost/api-test/index.php/
+            base_url: http://localhost:8080/api/index.php/

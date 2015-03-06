@@ -33,8 +33,14 @@ class TrafficStats{
      * }
      * </pre></code>
      *
-     * The lat and lng should be sent as numbers. Midpoint could be sent either as either "17:30" or "5:30 PM".
+     * The lat and lng should be sent as numbers. Midpoint should be sent in the form "17:30".
      * The weekday parameter should be a text string with the name of the day of the week to run statistics on.
+     *
+     * Response codes
+     * No errors - 200
+     * JSON object is empty - 412
+     * Couldn't find the requested object, usually because the given ID doesnt exist in the database - 404
+     * Couldn't get stations from users given taps - 400
      *
      * @param array $startpt Contains the keys "lat" and "lng" representing the starting point.
      * @param array $endpt Contains the keys "lat" and "lng" representing the ending point
@@ -44,8 +50,6 @@ class TrafficStats{
      * @throws RestException
      * @url POST
      */
-    // If we want to pull aprt the json payload with restler
-    // http://stackoverflow.com/questions/14707629/capturing-all-inputs-in-a-json-request-using-restler
     public function doPOST ($startpt, $endpt, $time,$request_data=null)
     {
         if (empty($request_data)) {
