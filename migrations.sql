@@ -185,7 +185,7 @@ $func$ LANGUAGE sql;
 
 -------------------
 -- DEVELOPER NOTE: You'll need this function in your local database, which is predefined in the production database
- CREATE OR REPLACE FUNCTION public.round2(double precision)
-  RETURNS numeric
-  LANGUAGE sql
- AS $function$select round(cast($1 as numeric), 2)$function$
+-- CREATE OR REPLACE FUNCTION public.round2(double precision)
+--  RETURNS numeric
+--  LANGUAGE sql
+-- AS $function$select round(cast($1 as numeric), 2)$function$
