@@ -77,13 +77,6 @@ CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
   GROUP BY highways.highwayid
   HAVING count(distinct stations.stationid)>0;
 
--------------------
--- DEVELOPER NOTE: You'll need this function in your local database, which is predefined in the production database
- CREATE OR REPLACE FUNCTION public.round2(double precision)
-  RETURNS numeric
-  LANGUAGE sql
- AS $function$select round(cast($1 as numeric), 2)$function$
-
 
 -- AGGREGATE: median
 -- Taken from https://wiki.postgresql.org/wiki/Aggregate_Median
@@ -190,4 +183,9 @@ SELECT hour,
 $func$ LANGUAGE sql;
 
 
-
+-------------------
+-- DEVELOPER NOTE: You'll need this function in your local database, which is predefined in the production database
+ CREATE OR REPLACE FUNCTION public.round2(double precision)
+  RETURNS numeric
+  LANGUAGE sql
+ AS $function$select round(cast($1 as numeric), 2)$function$

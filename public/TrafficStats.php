@@ -141,8 +141,9 @@ class TrafficStats{
         $retVal->results = $qRes;
         $retVal->info = $infoObj;
 
-        return new ApiResult($retVal);
-        //return $retVal;
+        $retVal= new ApiResult($qRes, $aboutQuery);
+        $retVal->info = $infoObj;
+        return $retVal;
     }
 
 
