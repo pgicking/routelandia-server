@@ -101,6 +101,15 @@ CREATE AGGREGATE routelandia.median(numeric) (
 );
 
 
+-- FUNCTION: num_5min_increments_between
+-- Takes a two ::times and calculates the number of 5 minute blocks that occurr between them.
+-- For example, given '14:00', '14:15', returns 3.
+CREATE OR REPLACE FUNCTION routelandia.num_5min_increments_between(_start_time time, _end_time time) RETURNS integer AS
+$$
+  SELECT extract(epoch from $2-$1)::integer / 60 / 5;
+$$ LANGUAGE 'sql';
+
+
 -- FUNCTION: agg_15_minute_for
 -- This function encapsulates the statistics query to get the 15-minute statistics for the given day-of-week for
 -- the given start/end times.
@@ -157,7 +166,7 @@ SELECT hour,
                15*div(extract('minute' from starttime)::int, 15) as "minute",
                round2(avg(D.speed)) as "avg_speed",
                round2((S.length/avg(D.speed))*60) as "avg_traveltime",
-               round2(100*(sum(countreadings)::float/(15*count(countreadings)::float))) as "accuracy"
+               round2(100*(sum(countreadings)/(15*num_5min_increments_between($3, $4))::float)::float) as "accuracy"
           FROM loopdata_5min_raw as D
           JOIN detectors dt ON D.detectorid = dt.detectorid
           JOIN stations S on dt.stationid = S.stationid
