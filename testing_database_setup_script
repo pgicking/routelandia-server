@@ -32,4 +32,4 @@ fi
 
 # if you remove the comment from the line below, the testing for the api will
 # run auto-magically after the testing database has been set up.
- vendor/bin/behat
+# vendor/bin/behat
