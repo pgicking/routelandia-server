@@ -19,10 +19,9 @@ class Stations {
    * HEADS first, followed by all first elements, etc...
    *
    * @access public
-   * @param int $highwayid The desired Highway id
    * @return [Station] A list of all stations.
    */
-  function index($highwayid=null) {
+  function index() {
     return new ApiResult(OrderedStation::fetchAll());
   }
 
