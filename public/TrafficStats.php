@@ -136,20 +136,15 @@ class TrafficStats{
         $infoObj->stations = $stationids;
         $infoObj->fullLength = $lenQ->len;
 
-        $aboutQuery = new stdClass;
-        $aboutQuery->detectorString = $detectorstring;
-        $aboutQuery->dateBlockStart = $dateBlockStart;
-        $aboutQuery->dateBlockEnd = $dateBlockEnd;
-        $aboutQuery->dow = $dow;
-        $aboutQuery->timeStart = $timeStart;
-        $aboutQuery->timeEnd = $timeEnd;
+        $debugQuery = new stdClass;
+        $debugQuery->detectorString = $detectorstring;
+        $debugQuery->dateBlockStart = $dateBlockStart;
+        $debugQuery->dateBlockEnd = $dateBlockEnd;
+        $debugQuery->dow = $dow;
+        $debugQuery->timeStart = $timeStart;
+        $debugQuery->timeEnd = $timeEnd;
 
-        $retVal = new stdClass;
-        $retVal->query = $aboutQuery;
-        $retVal->results = $qRes;
-        $retVal->info = $infoObj;
-
-        $retVal= new ApiResult($qRes, $aboutQuery);
+        $retVal= new ApiResult($qRes, $debugQuery);
         $retVal->info = $infoObj;
         return $retVal;
     }

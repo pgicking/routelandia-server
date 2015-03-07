@@ -26,6 +26,7 @@ is destined to be owned by the team that manages it.)
     $DB_NAME = "portal_staging";
     $DB_USER = "username";
     $DB_PASSWORD = "password";
+    $GLOBALS['RUN_IN_PRODUCTION'] = true; // Only if you're running in production mode.
   ```
 * Run the migrations.sql file to add routelandia specific content to the production database.
 NOTE: The views/functions added to the production database in the next step are put into a schema called "routelandia", so you'll need to make sure that the database user that is connecting has this schema in their search path.
