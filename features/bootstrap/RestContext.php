@@ -751,6 +751,21 @@ class RestContext extends BehatContext
         	throw new Exception("The $arg1 property is not an object");
         }
     }
+    
+    /**
+     * @Given /^the "([^"]*)" property in the array is an object$/
+     */
+    public function thePropertyInTheArrayIsAnObject($arg1)
+    {
+        $data = $this->_data;
+        foreach ($data->results as $val) {
+		    if (is_object($val->$arg1)) {
+		    	return;
+		    }
+        }
+        throw new Exception("The $arg1 property in the array is not an object");
+    }
+
 
     /**
      * @Then /^the "([^"]*)" property equals null$/
@@ -762,6 +777,99 @@ class RestContext extends BehatContext
         	throw new Exception("This is not the null we were looking for");
         }
     }
+    
+    /**
+     * @Given /^the "([^"]*)" property in the array equals (\d+)$/
+     */
+    public function thePropertyInTheArrayEquals($arg1, $arg2)
+    {
+        $data = $this->_data;
+        foreach ($data->results as $val) {
+        	if ($val->$arg1 == $arg2) {
+        		return;
+        	}
+        }
+        throw new Exception("The $arg1 property in the array does not equal $arg2");
+    }
+    
+    /**
+     * @Given /^the "([^"]*)" property in the array equals null$/
+     */
+    public function thePropertyInTheArrayEqualsNull($arg1)
+    {
+        $data = $this->_data;
+        foreach ($data->results as $val) {
+        	if ($val->$arg1 == null) {
+        		return;
+        	}
+        }
+        throw new Exception("The $arg1 property in the array does not equal $arg2");
+    }
+
+    /**
+     * @Given /^the "([^"]*)" property in the array equals (\d+\.\d+)$/
+     */
+    public function thePropertyInTheArrayEquals3($arg1, $arg2)
+    {
+        $data = $this->_data;
+        foreach ($data->results as $val) {
+        	if ($val->$arg1 == $arg2) {
+        		return;
+        	}
+        }
+        throw new Exception("The $arg1 property in the array does not equal $arg2");
+    }
+
+    /**
+     * @Given /^the "([^"]*)" property in the array equals \'([^\']*)\'$/
+     */
+    public function thePropertyInTheArrayEquals2($arg1, $arg2)
+    {
+        $data = $this->_data;
+	    foreach ($data->results as $val) {
+	    	if ($val->$arg1 == $arg2) {
+	    		return;
+	    	}
+	    }
+		throw new Exception("The $arg1 property in the array does not equal $arg2");
+    }
+
+    /**
+     * @Given /^the "([^"]*)" and "([^"]*)" property in the array equals \'([^\']*)\'$/
+     */
+    public function theAndPropertyInTheArrayEquals($arg1, $arg2, $arg3)
+    {
+        $data = $this->_data;
+        //var_dump(get_object_vars($data)); //for troubleshooting
+        if (property_exists($data, "results")) {
+		    foreach ($data->results as $val) {
+		    	if ($val->$arg1->$arg2 != $arg3) {
+		    		throw new Exception("The $arg1 property in the array does not equal $arg2");
+		    	}
+		    }
+        } else if (property_exists($data, $arg1)) {
+        	//var_dump(get_object_vars($data)); //for troubleshooting
+        	$temp = '';
+			foreach ($data as $val) {
+				try {
+					if ($val->$arg2 == $arg3) {
+						return;
+					} else {
+						if (property_exists($val, $arg2)) {
+							$temp = $val->$arg2;
+						}
+					}
+				} catch (Exception $e) {
+					//don't do anything, this catches errors thrown when checking to see if the arg2 property 
+					//equals arg3, if the property doesn't exist in val, it normally throws an exception that
+					//we don't need
+				}
+		    }
+		    throw new Exception("The $arg2 property in the array does not equal $arg3, it equals $temp");
+        }
+    }
+
+
     
 	public function stationChecker($data)
 	{
@@ -876,7 +984,20 @@ class RestContext extends BehatContext
      */
     public function theStationIsAStation()
     {
-    	return $this->stationChecker($this->_data);
+    	$data = $this->_data;
+    	//var_dump(get_object_vars($data)); //for troubleshooting
+    	if (is_array($data->results)) {
+    		foreach ($data->results as $station)
+    		{
+    			if (!$this->stationChecker($station))
+    			{
+    				throw new Exception("The station is not a station");
+    			}
+    		}
+    		return true;
+    	} else {
+    		return $this->stationChecker($this->_data);
+    	}
     }
 
 	    /**
@@ -884,7 +1005,20 @@ class RestContext extends BehatContext
      */
     public function theHighwayIsAHighway()
     {
-    	return $this->highwayChecker($this->_data);
+    	$data = $this->_data;
+    	//var_dump(get_object_vars($data)); //for troubleshooting
+    	if (is_array($data->results)) {
+    		foreach ($data->results as $station)
+    		{
+    			if (!$this->highwayChecker($station))
+    			{
+    				throw new Exception("The station is not a station");
+    			}
+    		}
+    		return true;
+    	} else {
+    		return $this->highwayChecker($this->_data);
+    	}
     }
     
     /**
@@ -892,7 +1026,20 @@ class RestContext extends BehatContext
      */
     public function theDetectorIsADetector()
     {
-        return $this->detectorChecker($this->_data);
+    	$data = $this->_data;
+    	//var_dump(get_object_vars($data)); //for troubleshooting
+    	if (is_array($data->results)) {
+    		foreach ($data->results as $station)
+    		{
+    			if (!$this->detectorChecker($station))
+    			{
+    				throw new Exception("The station is not a station");
+    			}
+    		}
+    		return true;
+    	} else {
+    		return $this->detectorChecker($this->_data);
+    	}
     }
 
     
@@ -902,10 +1049,22 @@ class RestContext extends BehatContext
     public function allOfTheStationsInTheArrayAreStations()
     {
         $data = $this->_data;
-        foreach($data as $val)
-        	if (!$this->stationChecker($val)) {
-        		throw new Exception("This station in the array of stations is not a station");
-        	}
+        //var_dump(get_object_vars($data)); //for troubleshooting
+        if (is_array($data->results)) {
+		    foreach($data->results as $val)
+		    {
+		    	if (!$this->stationChecker($val)) {
+		    		throw new Exception("This station in the array of stations is not a station");
+		    	}
+		    }
+		} else {
+			foreach($data as $val)
+		    {
+		    	if (!$this->stationChecker($val)) {
+		    		throw new Exception("This station in the array of stations is not a station");
+		    	}
+		    }
+		}
     }
 
     /**
@@ -914,10 +1073,22 @@ class RestContext extends BehatContext
     public function allOfTheHighwaysInTheArrayAreHighways()
     {
         $data = $this->_data;
-        foreach($data as $val)
-        	if (!$this->highwayChecker($val)) {
-        		throw new Exception("This highway in the array of highways is not a highway");
-        	}
+        //var_dump(get_object_vars($data)); //for troubleshooting
+        if (is_array($data->results)) {
+		    foreach($data->results as $val)
+		    {
+		    	if (!$this->highwayChecker($val)) {
+		    		throw new Exception("This highway in the array of highways is not a highway");
+		    	}
+		    }
+		} else {
+			foreach($data as $val)
+		    {
+		    	if (!$this->highwayChecker($val)) {
+		    		throw new Exception("This highway in the array of highways is not a highway");
+		    	}
+		    }
+		}
     }
 
 
@@ -927,10 +1098,22 @@ class RestContext extends BehatContext
     public function allOfTheDetectorsInTheArrayAreDetectors()
     {
         $data = $this->_data;
-        foreach($data as $val)
-        	if (!$this->detectorChecker($val)) {
-        		throw new Exception("This detector in the array of detectors is not a detector");
-        	}
+        //var_dump(get_object_vars($data)); //for troubleshooting
+        if (is_array($data->results)) {
+		    foreach($data->results as $val)
+		    {
+		    	if (!$this->detectorChecker($val)) {
+		    		throw new Exception("This detector in the array of detectors is not a detector");
+		    	}
+		    }
+		} else {
+			foreach($data as $val)
+		    {
+		    	if (!$this->detectorChecker($val)) {
+		    		throw new Exception("This detector in the array of detectors is not a detector");
+		    	}
+		    }
+		}
     }
 
     /**
@@ -938,10 +1121,10 @@ class RestContext extends BehatContext
      */
     public function thePropertyContainsAnOnramp($arg1)
     {
-    	
         $data = $this->_data;
-        return $this->onrampChecker($data->$arg1);
+        return $this->onrampChecker($data->results[0]->$arg1);
     }
-
-
 }
+
+
+

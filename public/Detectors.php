@@ -3,6 +3,7 @@
 use Respect\Data\Collections\Filtered;
 use Routelandia\Entities\Detector;
 use Routelandia\Entities\OrderedStation;
+use Routelandia\Entities\ApiResult;
 
 class Detectors
 {
@@ -17,7 +18,7 @@ class Detectors
    * @return [Detector]
    */
   function get($id) {
-    return Detector::fetch($id);
+    return new ApiResult(Detector::fetch($id));
   }
 
 
@@ -31,7 +32,7 @@ class Detectors
    * @return [Detector] A list of all detectors.
    */
   function index() {
-    return Detector::fetchAll();
+    return new ApiResult(Detector::fetchAll());
   }
 
 
@@ -48,7 +49,7 @@ class Detectors
    */
   public function stillActive($id){
     $thisDetector = Detector::fetch($id);
-    return $thisDetector->stillActive();
+    return new ApiResult($thisDetector->stillActive());
   }
 
 
@@ -66,6 +67,6 @@ class Detectors
     $thisDetector = Detector::fetch($detectorid);
     $s = OrderedStation::Fetch($thisDetector->stationid);
     $s->decodeSegmentsJson();
-    return $s;
+    return new ApiResult($s);
   }
 }

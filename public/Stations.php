@@ -4,6 +4,7 @@ use Respect\Data\Collections\Filtered;
 use Routelandia\Entities\OrderedStation;
 use Routelandia\Entities\Detector;
 use Routelandia\Entities\Station;
+use Routelandia\Entities\ApiResult;
 
 require_once"../Util.php";
 
@@ -22,7 +23,7 @@ class Stations {
    * @return [Station] A list of all stations.
    */
   function index($highwayid=null) {
-    return OrderedStation::fetchAll();
+    return new ApiResult(OrderedStation::fetchAll());
   }
 
 
@@ -41,7 +42,7 @@ class Stations {
    * @return [Station]
    */
   function get($id) {
-    return OrderedStation::fetch($id);
+    return new ApiResult(OrderedStation::fetch($id));
   }
 
 
@@ -73,7 +74,7 @@ class Stations {
     } catch (Exception $e) {
     	$retVal->relatedOnrampInfo = null;
     }
-    return $retVal;
+    return new ApiResult($retVal);
   }
 
 
@@ -90,7 +91,7 @@ class Stations {
    * @url GET {id}/detectors
    */
   public function getDetectors($id) {
-    return Detector::fetchForStation($id);
+    return new ApiResult(Detector::fetchForStation($id));
   }
 
 
