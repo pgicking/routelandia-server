@@ -134,15 +134,14 @@ $func$
 -- We use the Median for traveltime to throw out extreme outliers and give a better general picture of the last 6 weeks.
 SELECT hour,
        minute,
-       round2(median(avg_speed)) as "speed",
-       round2(median(avg_traveltime)) as "traveltime",
-       round2(sum(accuracy)::float/(count(accuracy)::float)) as "accuracy"
+       round2(median(avg_speed)) as "speed",              -- The median speed during this time segment
+       round2(sum(avg_traveltime)) as "traveltime",       -- The median traveltime during this time segment
+       round2(avg(accuracy)) as "accuracy"                -- The average of the accuracy for each time group... Close enough.
   FROM
   (
     -- Middle query takes the results and groups them by time, collapsing the stations out of the result
     -- and allowing us to do the total traveltime across the entire route.
-    SELECT hour,                                          -- Group-by of a group-by, stays the same
-           minute,                                        -- Group-by of a group-by, stays the same
+    SELECT year,month, day, hour, minute                  -- Group-by of a group-by, stays the same
            avg(avg_speed) as "avg_speed",                 -- The average of all stations
            sum(avg_traveltime) as "avg_traveltime",       -- The SUM of the average of all stations is the total traveltime for the entire length
            avg(accuracy) as "accuracy"                    -- The average of the accuracy for each station... Close enough.
@@ -163,27 +162,23 @@ SELECT hour,
                extract('month' from starttime) as "month",
                extract('day' from starttime) as "day",
                extract('hour' from starttime) as "hour",
-               15*div(extract('minute' from starttime)::int, 15) as "minute",
-               round2(avg(D.speed)) as "avg_speed",
-               round2((S.length/avg(D.speed))*60) as "avg_traveltime",
-               round2(100*(sum(countreadings)/(15*num_5min_increments_between($3, $4))::float)::float) as "accuracy"
+               15*div(extract('minute' from starttime)::int, 15) as "minute",                   -- Bundle into 15 minute increments...
+               round2(avg(D.speed)) as "avg_speed",                                             -- The average of all the detectors in this station is the avg for the station
+               round2((S.length/avg(D.speed))*60) as "avg_traveltime",                          -- And we can divide the average speed for the station by the station length to get the traveltime
+               round2(100*(sum(countreadings)/(3*15*S.numberlanes)::float)) as "accuracy"       -- Every lane should have a detector which should return 15 readings per 5 minute interval, multiply by 3 to get our 15 minute group expected result
           FROM loopdata_5min_raw as D
           JOIN detectors dt ON D.detectorid = dt.detectorid
           JOIN stations S on dt.stationid = S.stationid
           WHERE D.speed IS NOT NULL
             AND D.speed != 0
-            AND D.detectorid =ANY($1)
+            D.detectorid = ANY($1)
             AND D.starttime >= (now()::date - '6 weeks'::interval)
             AND extract('dow' from D.starttime) = $2
             AND D.starttime::time >= $3::time
             AND D.starttime::time <= $4::time
           GROUP BY S.stationid,
-                   extract('year' from D.starttime),
-                   extract('month' from D.starttime),
-                   extract('day' from D.starttime),
-                   extract('hour' from D.starttime),
-                   minute
-          ORDER BY S.stationid, year, month, day, hour, minute
+                   year, month, day, hour, minute
+          -- ORDER BY S.stationid, year, month, day, hour, minute
       ) AS fifteen_minute_agg
       GROUP BY year, month, day, hour, minute
   ) AS by_full_day_and_time_agg
