@@ -129,12 +129,18 @@ class TrafficStats{
         $qRes = DB::sql()->select("*")->from("agg_15_minute_for('{$detectorstring}'::integer[], {$dow}, '{$timeStart}', '{$timeEnd}')")->fetchAll(array());
 
         // Let's build some info about the result.
-        $lenQ = DB::sql()->select("sum(length) as \"len\"")->from("stations")->where("stationid IN (".implode(",",$stationids).")")->fetch();
+        $lenQ = DB::sql()->select("sum(length) AS \"len\", sum(numberlanes) AS \"expected_detector_count\"")
+                         ->from("stations")
+                         ->where("stationid IN (".implode(",",$stationids).")")
+                         ->fetch();
 
 
         $infoObj = new stdClass;
         $infoObj->stations = $stationids;
         $infoObj->fullLength = $lenQ->len;
+        $infoObj->expectedDetectorCount = $lenQ->expected_detector_count;
+        $infoObj->actualDetectorCount = count($detectors);
+        $infoObj->detectorPercentError = abs(($infoObj->actualDetectorCount - $infoObj->expectedDetectorCount)/$infoObj->expectedDetectorCount)*100;
 
         $debugQuery = new stdClass;
         $debugQuery->detectorString = $detectorstring;
