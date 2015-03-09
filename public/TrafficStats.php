@@ -89,63 +89,40 @@ class TrafficStats{
         $timeF->modify("this {$time['weekday']}");
         $dow = intval($timeF->format("w"));
 
-        // Get the most recent DATE which has the day-of-week requested.
-        // Our time block will be the 6 weeks leading up to that date.
-        $dateBlockEnd = new DateTime("last ".$time['weekday']);
-        $dateBlockStart = clone $dateBlockEnd;
-        $dateBlockStart->modify("-6 weeks");
 
         // Next we'll do is build a list of detectors that were live for all stations in the
         // linked-list we've found (including and between the start and end stations)
         // NOTE that we're putting utter faith in the function that determined that the end station
         // is a valid downstream for the start station. This isn't super great, but it works for now.
-        $detectors = array();
         $stationids = array();
-        
         $curStationId = $validStations[0];
         while($curStationId != null) {
           $stationids[] = $curStationId;
-          $tds = Detector::fetchActiveForStationInDateRange($curStationId, $dateBlockStart, $dateBlockEnd);
-          $detectors = array_merge($detectors, $tds);
           if($curStationId == $validStations[1]) {
             $curStationId = null; // Kick out of the loop
           } else {
             $curStationId = OrderedStation::getDownstreamIdFor($curStationId);
           }
         }
-        $detectorstring = "{";
-        $i = count($detectors);
-        foreach($detectors as $d) {
-          $detectorstring .= "{$d->detectorid}";
+        $stationstring = "{";
+        $i = count($stationids);
+        foreach($stationids as $s) {
+          $stationstring .= "{$s}";
 
           $next = !!(--$i);
           if($next) {
-            $detectorstring .= ",";
+            $stationstring .= ",";
           }
         }
-        $detectorstring .= "}";
+        $stationstring .= "}";
 
         // Now that we have the detectors that were valid during that time period
-        $qRes = DB::sql()->select("*")->from("agg_15_minute_for('{$detectorstring}'::integer[], {$dow}, '{$timeStart}', '{$timeEnd}')")->fetchAll(array());
-
-        // Let's build some info about the result.
-        $lenQ = DB::sql()->select("sum(length) AS \"len\", sum(numberlanes) AS \"expected_detector_count\"")
-                         ->from("stations")
-                         ->where("stationid IN (".implode(",",$stationids).")")
-                         ->fetch();
-
+        $qRes = DB::sql()->select("*")->from("agg_15_minute_for('{$stationstring}'::integer[], {$dow}, '{$timeStart}', '{$timeEnd}')")->fetchAll(array());
 
         $infoObj = new stdClass;
         $infoObj->stations = $stationids;
-        $infoObj->fullLength = $lenQ->len;
-        $infoObj->expectedDetectorCount = $lenQ->expected_detector_count;
-        $infoObj->actualDetectorCount = count($detectors);
-        $infoObj->detectorPercentError = abs(($infoObj->actualDetectorCount - $infoObj->expectedDetectorCount)/$infoObj->expectedDetectorCount)*100;
 
         $debugQuery = new stdClass;
-        $debugQuery->detectorString = $detectorstring;
-        $debugQuery->dateBlockStart = $dateBlockStart;
-        $debugQuery->dateBlockEnd = $dateBlockEnd;
         $debugQuery->dow = $dow;
         $debugQuery->timeStart = $timeStart;
         $debugQuery->timeEnd = $timeEnd;
