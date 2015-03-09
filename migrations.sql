@@ -159,7 +159,7 @@ RETURN QUERY SELECT
                             WHERE starttime >= (now()::date - '6 weeks'::interval)
                             AND extract('dow' from starttime) = $2
                             AND starttime::time >= $3
-                            AND starttime::time <= $4
+                            AND starttime::time < $4
                           ) as l
                           ON d.detectorid = l.detectorid
           WHERE s.stationid = ANY($1)
