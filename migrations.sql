@@ -93,7 +93,7 @@ CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
 --
 -- Example for calling this function: SELECT * FROM routelandia.agg_15_minute_for('{100002, 100003, 100004, 100005}'::integer[], 5, '14:00'::time, '18:00'::time);
 CREATE OR REPLACE FUNCTION routelandia.agg_15_minute_for(_station_list integer[], _day_of_week numeric, _start_time time, _end_time time)
-  RETURNS TABLE (hour double precision, minute numeric, speed numeric, distance double precision, traveltime numeric, accuracy numeric) AS
+  RETURNS TABLE (hour double precision, minute numeric, distance double precision, speed numeric, traveltime numeric, accuracy numeric) AS
 $func$
 DECLARE
   -- These will hold the results of some pre-queries that we'll use. (Better than nested queries.)
@@ -118,12 +118,12 @@ SELECT INTO segment_length sum(length) FROM stations WHERE stationid = ANY($1);
 -- i.e. "2015-03-01 15:00" and "2015-03-08 15:00" (And the 4 other weeks) get collapsed into just "15:00".
 -- This is also the point at which we calculate the traveltime and accuracy of the entire rout.
 RETURN QUERY SELECT
-       hour_i AS "hour",                                                                -- We're grouping the inner query by hour.
-       minute_i AS "minute",
-       segment_length as "distance",                                      -- We collect this in each result, even though it's a constant, so that we can get this value in the app without needing a second query.
-       round2(avg(avg_speed)) as "speed",                                               -- The average speed across all stations during this 15 minute interval
-       round2( (segment_length / avg(avg_speed))*60) AS "traveltime",                   -- The average speed over the entire length is a reasonable approximation of the travel time.
-       round2(100*(sum(total_readings)/(expected_readings_per_15_minute*count(total_readings)))) as "accuracy", -- We know how many readings we SHOULD get, so we can get accuracy by checking against the average readings for each week.
+       hour_i AS "hour",                                                                                        -- We're grouping the inner query by hour.
+       minute_i AS "minute",                                                                                    -- ... and minute ...
+       segment_length as "distance",                                                                            -- We collect this in each result, even though it's a constant, so that we can get this value in the app without needing a second query.
+       round2(avg(avg_speed)) as "speed",                                                                       -- The average speed across all stations during this 15 minute interval
+       round2( (segment_length / avg(avg_speed))*60) AS "traveltime",                                           -- The average speed over the entire length is a reasonable approximation of the travel time.
+       round2(100*(sum(total_readings)/(expected_readings_per_15_minute*count(total_readings)))) as "accuracy"  -- We know we should get a certain number of readings per detector for a 15 minute period, so multiply that by the number of 15 minute increments, and that's how many we should get total. Compare against how many we actually got.
   FROM
   (
     -- This inner query is designed to strip out the stations and aggregate down to the data for the entire route
