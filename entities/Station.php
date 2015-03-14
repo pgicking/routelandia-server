@@ -30,7 +30,7 @@ class Station {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetchAll() {
-    $ss = DB::mapper()->stations()->fetchAll();
+    $ss = DB::mapper()->stations()->where("end_date IS NULL")->fetchAll();
     if(!$ss) {
       throw new \Luracast\Restler\RestException(404, "No stations could be found.");
     }
@@ -54,7 +54,7 @@ class Station {
    * @throws \Luracast\Restler\RestException
    */
   public static function fetch($id) {
-    $s = DB::mapper()->stations[$id]->fetch();
+    $s = DB::mapper()->stations(array('stationid='=>$id, 'end_date IS NULL'))->fetch();
     if(!$s) {
       throw new \Luracast\Restler\RestException(404, "Station ID not found");
     }
@@ -77,7 +77,7 @@ class Station {
   public static function fetchForHighway($hid) {
     // TODO: This should use stations()->highways[$id] instead of hardcoding 'highwayid'.
     //         Unfortunately that seems to throw an error in Mapper.
-    $ss = DB::mapper()->stations(array('highwayid='=>$hid))->fetchAll();
+    $ss = DB::mapper()->stations(array('highwayid='=>$hid))->where("end_date IS NULL")->fetchAll();
     if(!$ss) {
       throw new \Luracast\Restler\RestException(404, "No stations were found for the highway you requested");
     }
