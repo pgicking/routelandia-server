@@ -78,7 +78,11 @@ CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
   SELECT h.*
   FROM highways h
   WHERE h.highwayid > 0
-    AND (SELECT count(*) FROM stations WHERE end_date IS NULL AND highwayid = h.highwayid) > 0;
+    AND (SELECT count(*) FROM stations WHERE                      -- Ensure this highway has stations by:
+                                segment_geom IS NOT NULL          -- Making sure they have DRAWABLE stations, i.e. stations have a segment
+                                AND end_date IS NULL              -- Making sure they have LIVE stations, not retired.
+                                AND highwayid = h.highwayid       -- For the current highway of the outer query.
+        ) > 0;
 
 
 -- FUNCTION: agg_15_minute_for
