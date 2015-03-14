@@ -150,7 +150,7 @@ RETURN QUERY SELECT
                sum(l.countreadings) as "total_readings"
           FROM stations s
           JOIN detectors d ON s.stationid = d.stationid
-                            AND (d.end_date >= (now()::date-'6 weeks'::interval) OR end_date IS NULL) -- Make sure to only include detectors which were "live" sometime in our desired interval
+                            AND (d.end_date >= (now()::date-'6 weeks'::interval) OR d.end_date IS NULL) -- Make sure to only include detectors which were "live" sometime in our desired interval
           -- We use an inner query here because if we just join on it and then filter rows, we filter out the rows where 
           -- there's a valid station, but it doesn't have any loopdata records in the requested interval.
           -- This keeps every requested station in the next outer query.
