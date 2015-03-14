@@ -78,7 +78,7 @@ CREATE OR REPLACE VIEW routelandia.highwaysHavingStations AS
   SELECT h.*
   FROM highways h
   WHERE h.highwayid > 0
-    AND (SELECT count(*) FROM stations WHERE highwayid = h.highwayid)>0;
+    AND (SELECT count(*) FROM stations WHERE end_date IS NULL AND highwayid = h.highwayid) > 0;
 
 
 -- FUNCTION: agg_15_minute_for
