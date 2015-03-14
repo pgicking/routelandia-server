@@ -64,7 +64,7 @@ CREATE OR REPLACE VIEW routelandia.orderedStations AS WITH RECURSIVE stations_by
           AND s.end_date IS NULL        -- As long as it's actually a LIVE station
   )
 )
-SELECT * from stations_by_highway WHERE stationid IN (SELECT stationid FROM detectors WHERE enabledflag=1) ORDER BY linked_list_position;
+SELECT * from stations_by_highway ORDER BY linked_list_path
 
 
 -- VIEW: highwaysWithStations
