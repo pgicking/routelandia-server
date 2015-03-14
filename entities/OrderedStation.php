@@ -42,12 +42,8 @@ class OrderedStation extends Station {
 
   // We're going to convert these and output them as the geojson_x columns
   // so we'll hide the raw columns by setting them protected.
-  protected $segment_raw;
-  protected $segment_50k;
-  protected $segment_100k;
-  protected $segment_250k;
-  protected $segment_500k;
-  protected $segment_1000k;
+  protected $segment_geom;
+  protected $station_geom;
 
   /**
    * @Relational\isNotColumn
@@ -70,7 +66,7 @@ class OrderedStation extends Station {
    * @throws \Luracast\Restler\RestException
    */
   public function decodeSegmentsJson() {
-    if(is_bool($this->geojson_raw = json_decode($this->segment_raw))){
+    if(is_bool($this->geojson_raw = json_decode($this->segment_geom))){
       throw new \Luracast\Restler\RestException(404,"Invalid ID request");
     }
   }
@@ -140,7 +136,7 @@ class OrderedStation extends Station {
    * @return array [OrderedStation] List of ordered stations
    */
   static public function getStationsFromCoord($coord){
-     $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[1] $coord[0])', 4326), 3857), segment_raw) <= 500");
+     $s = Sql::select('*')->from('stations')->where("ST_Distance(ST_Transform(ST_GeomFromText('POINT($coord[1] $coord[0])', 4326), 3857), segment_geom) <= 500");
      $ss = DB::sql()->orderedStations()->query($s)->fetchAll('Routelandia\Entities\OrderedStation');
      if(empty($ss)){
          throw new \Luracast\Restler\RestException(400,"Could not find any stations within 200 meters of the given coordinates");
