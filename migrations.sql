@@ -163,7 +163,7 @@ RETURN QUERY SELECT
                             AND starttime::time < $4
                           ) as l
                           ON d.detectorid = l.detectorid
-          WHERE s.stationid = ANY($1)
+          WHERE s.stationid = ANY($1) AND s.end_date IS NULL
           GROUP BY s.stationid, year_i, month_i, day_i, hour_i, minute_i
       ) AS fifteen_minute_agg
       GROUP BY year_i,month_i,day_i,hour_i,minute_i
