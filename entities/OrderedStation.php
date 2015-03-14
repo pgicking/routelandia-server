@@ -125,8 +125,7 @@ class OrderedStation extends Station {
     return $s;
   }
 
-  /** Will take two coordinates and return the closest station
-   *
+  /**
    * Will take two coordinates and return the closest stations
    *
    * NOTE: Passed coordinates must have at least 6 significant digits or
